@@ -34,7 +34,6 @@ public class ClientHandler {
                             String[] array = msg.split(" ");
                             String recipient = array[1];
                             String msgToPersonal = array[2];
-                            System.out.println(recipient + msgToPersonal);
                             server.sendMessageClient(this, recipient, msgToPersonal);
                             continue;
                         }
