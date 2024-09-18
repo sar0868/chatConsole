@@ -29,7 +29,7 @@ public class Server {
         }
     }
 
-    private synchronized void subscribe(ClientHandler clientHandler) {
+    public synchronized void subscribe(ClientHandler clientHandler) {
         if (isName(clientHandler.getName())) {
             clientHandler.sendErrorName();
             return;

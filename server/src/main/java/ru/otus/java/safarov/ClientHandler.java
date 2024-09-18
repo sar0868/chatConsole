@@ -17,24 +17,50 @@ public class ClientHandler {
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
-        requestName();
+//        requestName();
         new Thread(() -> {
             try {
-                System.out.println("Клиент " + name + " подключился");
-                while (true) {
+                System.out.println("Клиент с порта " + socket.getLocalPort() + " подключился");
+//                цикл аутентификации
+                while (true){
                     String msg = in.readUTF();
                     if (msg.startsWith("/")) {
                         if (msg.startsWith("/exit")) {
-                            sendMessage("/exitok");
-                            System.out.println("Клиенту " + name + " отравлено сообщение о закрытии");
+                            exit(msg);
                             break;
                         }
-                        if (msg.startsWith("/w")) {
-                            msg = msg.trim().replaceAll("\\s+", " ");
-                            String[] array = msg.split(" ");
-                            String recipient = array[1];
-                            String msgToPersonal = array[2];
-                            server.sendMessageClient(this, recipient, msgToPersonal);
+                        if (msg.startsWith("/auth")) {
+                            authClient(msg);
+//                            msg = msg.trim().replaceAll("\\s+", " ");
+//                            String[] array = msg.split(" ");
+//                            String recipient = array[1];
+//                            String msgToPersonal = array[2];
+//                            server.sendMessageClient(this, recipient, msgToPersonal);
+                            continue;
+                        }
+                        if (msg.startsWith("/list")) {
+                            server.sendList(this);
+                            continue;
+                        }
+                    }
+                    server.broadcastMessage(name + ": " + msg);
+                }
+                while (true) {
+                    String msg = in.readUTF();
+                    if (msg.startsWith("/")) {
+                        if (msg.startsWith("/exit ")) {
+                            exit(msg);
+//                            sendMessage("/exitok");
+//                            System.out.println("Клиенту " + name + " отравлено сообщение о закрытии");
+                            break;
+                        }
+                        if (msg.startsWith("/w ")) {
+                            personalMsg(msg);
+//                            msg = msg.trim().replaceAll("\\s+", " ");
+//                            String[] array = msg.split(" ");
+//                            String recipient = array[1];
+//                            String msgToPersonal = array[2];
+//                            server.sendMessageClient(this, recipient, msgToPersonal);
                             continue;
                         }
                         if (msg.startsWith("/list")) {
@@ -52,6 +78,8 @@ public class ClientHandler {
             }
         }).start();
     }
+
+
 
     private void disconnect() {
         server.unsubscribe(this);
@@ -100,6 +128,10 @@ public class ClientHandler {
 
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void sendErrorName() {
         try {
             out.writeUTF("Имя " + name + " уже используется.");
@@ -107,5 +139,30 @@ public class ClientHandler {
             e.printStackTrace();
         }
         requestName();
+    }
+
+    private void exit(String msg) {
+        sendMessage("/exitok");
+        System.out.println("Клиенту " + name + " отравлено сообщение о закрытии");
+    }
+
+    private void personalMsg(String msg){
+        msg = msg.trim().replaceAll("\\s+", " ");
+        String[] array = msg.split(" ");
+        if (array.length < 3){
+//            server.sendMessageClient(this, );
+        }
+        String recipient = array[1];
+        String msgToPersonal = array[2];
+        server.sendMessageClient(this, recipient, msgToPersonal);
+    }
+
+    private void authClient(String msg) {
+//        msg = msg.trim().replaceAll("\\s+", " ");
+        String[] array = msg.split("\\s+");
+
+        String recipient = array[1];
+        String msgToPersonal = array[2];
+        server.sendMessageClient(this, recipient, msgToPersonal);
     }
 }
