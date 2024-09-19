@@ -10,11 +10,13 @@ import java.util.Map;
 public class Server {
     private final int port;
     private final Map<String, ClientHandler> clients;
-
+    private AuthenticatedProvider authenticatedProvider;
 
     public Server(int port) {
         this.port = port;
-        this.clients = new HashMap<>();
+        clients = new HashMap<>();
+        authenticatedProvider = new InMemoryAuthenticationProvider(this);
+        authenticatedProvider.initialize();
     }
 
     public void start() {
@@ -22,18 +24,18 @@ public class Server {
             System.out.println("Сервер запущен. Порт: " + port);
             while (true) {
                 Socket socket = serverSocket.accept();
-                subscribe(new ClientHandler(this, socket));
+                new ClientHandler(this, socket);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public AuthenticatedProvider getAuthenticatedProvider() {
+        return authenticatedProvider;
+    }
+
     public synchronized void subscribe(ClientHandler clientHandler) {
-        if (isName(clientHandler.getName())) {
-            clientHandler.sendErrorName();
-            return;
-        }
         clients.put(clientHandler.getName(), clientHandler);
     }
 
@@ -61,5 +63,15 @@ public class Server {
 
     public boolean isName(String name) {
         return clients.containsKey(name);
+    }
+
+    public boolean closeUser(String name) {
+        ClientHandler closeClient = clients.get(name);
+        if (closeClient == null) {
+            return false;
+        }
+        closeClient.sendMessage("/exitok");
+        clients.remove(name);
+        return true;
     }
 }
