@@ -28,4 +28,4 @@ completed: 15.09.2024
 
 deadline: 19.09.2024  
 start: 18.09.2024   
-completed:  
+completed: 19.09.2024    
