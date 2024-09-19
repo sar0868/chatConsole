@@ -19,33 +19,48 @@ public class Client {
         this.out = new DataOutputStream(socket.getOutputStream());
     }
 
-    public void start() throws IOException {
+    public void start(){
         new Thread(() -> {
             try {
-                while (true){
+                while (true) {
                     String msg = in.readUTF();
-                    if (msg.startsWith("/")){
-                        if (msg.startsWith("/exitok")){
+                    if (msg.startsWith("/")) {
+                        if (msg.startsWith("/exitok")) {
                             break;
                         }
+                        if (msg.startsWith("/authok")) {
+                            System.out.println("Вы прошли аутентификацию. Имя пользователя "
+                                    + msg.split(" ")[1]);
+
+                        }
+                        if (msg.startsWith("/regok")) {
+                            System.out.println("Вы зарегистрировались. Имя пользователя "
+                                    + msg.split(" ")[1]);
+                        }
+
+                    } else {
+                        System.out.println(msg);
                     }
-                    System.out.println(msg);
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
-            }
-            finally {
+            } finally {
                 disconnect();
             }
         }).start();
-        while (true){
+        while (true) {
             String msg = scanner.nextLine();
-            out.writeUTF(msg);
-            if (msg.startsWith("/exit")){
+            try {
+                out.writeUTF(msg);
+            } catch (IOException ex) {
+                break;
+            }
+            if (msg.startsWith("/exit")) {
                 break;
             }
         }
     }
+
 
     private void disconnect() {
         try {
