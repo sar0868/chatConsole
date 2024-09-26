@@ -78,27 +78,30 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             clientHandler.sendMessage("Указанный логин уже занят.");
             return false;
         }
-        if (isUserNameAlreadyExist(login)){
+        if (isUserNameAlreadyExist(username)){
             clientHandler.sendMessage("Указанное имя пользователя уже занято.");
             return false;
         }
         if (inMemory){
             users.add(new User(login, password, username));
         }
-        clientDAO.addUser(new User(login, password, username));
+        clientDAO.addUser(clientDAO.getAll().size()+1,new User(login, password, username));
         clientHandler.setName(username);
         server.subscribe(clientHandler);
         clientHandler.sendMessage("/regok " + username);
         return true;
     }
 
-    private boolean isUserNameAlreadyExist(String login) {
-        for (User user : users) {
-            if (user.getUsername().equals(login)){
-                return true;
+    private boolean isUserNameAlreadyExist(String username) {
+        if(inMemory){
+            for (User user : users) {
+                if (user.getUsername().equals(username)){
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
+        return clientDAO.isUserName(username);
     }
 
     private boolean isLoginAlreadyExist(String login) {

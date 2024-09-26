@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientDAO implements ClientService {
+    private  final String CHECK_USERNAME = "select id from Users where username = ?";
     private  final String INSERT_USER = "INSERT INTO Users (id, login, password, username) values (?,?,?,?)";
     private  final String INSERT_USERS_TO_ROLES= "INSERT INTO Users_to_Roles (userID, roleID) values (?, 2)";
     private  final String USER_ROLE = "SELECT role from Roles r \n" +
@@ -19,6 +20,7 @@ public class ClientDAO implements ClientService {
 
     public ClientDAO() throws SQLException {
         connection = DriverManager.getConnection(DATABASE_URL);
+
     }
 
     @Override
@@ -63,16 +65,12 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public void addUser(User user) {
+    public void addUser(int id, User user) {
         try (PreparedStatement pst = connection.prepareStatement(INSERT_USER)) {
             pst.setString(2, user.getLogin());
             pst.setString(3, user.getPassword());
             pst.setString(4, user.getUsername());
-            try(ResultSet resultSet = pst.executeQuery()){
-//                while (resultSet.next()) {
-//                    id = resultSet.getInt("id");
-//                }
-            }
+            int resultSet = pst.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -108,6 +106,22 @@ public class ClientDAO implements ClientService {
             throw new RuntimeException(e);
         }
         return role;
+    }
+
+    @Override
+    public boolean isUserName(String username) {
+        int id = -1;
+        try (PreparedStatement pst = connection.prepareStatement(CHECK_USERNAME)) {
+            pst.setString(1, username);
+            try(ResultSet resultSet = pst.executeQuery()){
+                while (resultSet.next()) {
+                    id = resultSet.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id != -1;
     }
 
     @Override

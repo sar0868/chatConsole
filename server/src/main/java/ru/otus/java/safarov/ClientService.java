@@ -6,9 +6,11 @@ public interface ClientService extends AutoCloseable{
     List<User> getAll();
     boolean isAdmin(int userID);
     String getUsername(String login, String password);
-    void addUser(User user);
+    void addUser(int id, User user);
 
     boolean isLogin(String login);
 
     String getRole(String username);
+
+    boolean isUserName(String username);
 }
