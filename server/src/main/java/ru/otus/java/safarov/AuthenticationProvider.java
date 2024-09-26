@@ -1,50 +1,50 @@
 package ru.otus.java.safarov;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
-    private class User {
-        private final String login;
-        private final String password;
-        private final String username;
-        private Role role;
-
-        public User(String login, String password, String username) {
-            this.login = login;
-            this.password = password;
-            this.username = username;
-            this.role = Role.USER;
-        }
-    }
+public class AuthenticationProvider implements AuthenticatedProvider {
 
     private final Server server;
     private final List<User> users;
+    private ClientDAO clientDAO;
+    private boolean inMemory;
 
-    public InMemoryAuthenticationProvider(Server server) {
+    public AuthenticationProvider(Server server) {
         this.server = server;
         this.users = new ArrayList<>();
-        this.users.add(new User("login1", "password1", "username1"));
-        this.users.add(new User("qwe", "qwe", "qwe1"));
-        this.users.add(new User("asd", "asd", "asd1"));
-        this.users.add(new User("zxc", "zxc", "zxc1"));
-        User admin = new User("admin", "admin", "admin");
-        admin.role = Role.ADMIN;
-        this.users.add(admin);
+        inMemory = true;
+//        this.users.add(new User("login1", "password1", "username1"));
+//        this.users.add(new User("qwe", "qwe", "qwe1"));
+//        this.users.add(new User("asd", "asd", "asd1"));
+//        this.users.add(new User("zxc", "zxc", "zxc1"));
+//        User admin = new User("admin", "admin", "admin");
+//        admin.setRole(Role.ADMIN);
+//        this.users.add(admin);
     }
 
     @Override
     public void initialize() {
-        System.out.println("Сервис аутентификации запущен. In memory режим");
+        try {
+            clientDAO = new ClientDAO();
+            System.out.println("Сервис аутентификации запущен. DB режим");
+            inMemory = false;
+        } catch (SQLException e) {
+            System.out.println("Сервис аутентификации запущен. In memory режим");
+        }
     }
 
     private String getUserNameByLoginAndPassword(String login, String password) {
-        for (User user : users) {
-            if (user.login.equals(login) && user.password.equals(password)) {
-                return user.username;
+        if (inMemory){
+            for (User user : users) {
+                if (user.getLogin().equals(login) && user.getPassword().equals(password)) {
+                    return user.getUsername();
+                }
             }
+            return null;
         }
-        return null;
+        return clientDAO.getUsername(login, password);
     }
 
     @Override
@@ -79,10 +79,13 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
             return false;
         }
         if (isUserNameAlreadyExist(login)){
-            clientHandler.sendMessage("Указанное имя пользователя уже занятщ.");
+            clientHandler.sendMessage("Указанное имя пользователя уже занято.");
             return false;
         }
-        users.add(new User(login, password, username));
+        if (inMemory){
+            users.add(new User(login, password, username));
+        }
+        clientDAO.addUser(new User(login, password, username));
         clientHandler.setName(username);
         server.subscribe(clientHandler);
         clientHandler.sendMessage("/regok " + username);
@@ -91,7 +94,7 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
 
     private boolean isUserNameAlreadyExist(String login) {
         for (User user : users) {
-            if (user.username.equals(login)){
+            if (user.getUsername().equals(login)){
                 return true;
             }
         }
@@ -99,21 +102,31 @@ public class InMemoryAuthenticationProvider implements AuthenticatedProvider {
     }
 
     private boolean isLoginAlreadyExist(String login) {
-        for (User user : users) {
-            if (user.login.equals(login)){
-                return true;
+        if(inMemory){
+            for (User user : users) {
+                if (user.getLogin().equals(login)){
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
+        return clientDAO.isLogin(login);
     }
 
     private Role getRole(String username){
-        for (User user : users) {
-            if (user.username.equals(username)){
-                return user.role;
+        if (inMemory){
+            for (User user : users) {
+                if (user.getUsername().equals(username)){
+                    return user.getRole();
+                }
             }
+            return null;
         }
-        return null;
+
+        if(clientDAO.getRole(username).equals("ADMIN")){
+            return Role.ADMIN;
+        }
+        return Role.USER;
     }
 
     @Override
