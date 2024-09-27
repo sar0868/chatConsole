@@ -15,10 +15,8 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         this.server = server;
         this.users = new ArrayList<>();
         inMemory = true;
-//        this.users.add(new User("login1", "password1", "username1"));
 //        this.users.add(new User("qwe", "qwe", "qwe1"));
 //        this.users.add(new User("asd", "asd", "asd1"));
-//        this.users.add(new User("zxc", "zxc", "zxc1"));
 //        User admin = new User("admin", "admin", "admin");
 //        admin.setRole(Role.ADMIN);
 //        this.users.add(admin);
@@ -85,7 +83,12 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         if (inMemory){
             users.add(new User(login, password, username));
         }
-        clientDAO.addUser(clientDAO.getAll().size()+1,new User(login, password, username));
+        if (!inMemory && clientDAO.addUser(clientDAO.getAll().size()+1,new User(login, password, username)) == -1){
+            String msgError = username + " не зарегистрирован.";
+            System.out.println(msgError);
+            clientHandler.sendMessage(msgError);
+            return false;
+        }
         clientHandler.setName(username);
         server.subscribe(clientHandler);
         clientHandler.sendMessage("/regok " + username);

@@ -1,12 +1,12 @@
 package ru.otus.java.safarov;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ClientService extends AutoCloseable{
     List<User> getAll();
-    boolean isAdmin(int userID);
     String getUsername(String login, String password);
-    void addUser(int id, User user);
+    int addUser(int id, User user) throws SQLException;
 
     boolean isLogin(String login);
 
