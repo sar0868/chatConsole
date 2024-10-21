@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
     private final int port;
     private final Map<String, ClientHandler> clients;
-    private AuthenticatedProvider authenticatedProvider;
+    private final AuthenticatedProvider authenticatedProvider;
 
     public Server(int port) {
         this.port = port;
@@ -41,7 +42,7 @@ public class Server {
 
     public synchronized void broadcastMessage(String msg) {
         for (Map.Entry<String, ClientHandler> client : clients.entrySet()) {
-            client.getValue().sendMessage(msg);
+            client.getValue().sendMessage(msg + " time: " + new Date());
         }
     }
 
@@ -51,9 +52,11 @@ public class Server {
 
     public void sendMessageClient(ClientHandler clientHandler, String recipient, String msgToPersonal) {
         if (clients.containsKey(recipient)) {
-            clients.get(recipient).sendMessage(clientHandler.getName() + ": " + msgToPersonal);
+            clients.get(recipient).sendMessage(clientHandler.getName() + ": " + msgToPersonal + " time: " +
+                    new Date());
         } else {
-            clientHandler.sendMessage("Клиента с ником " + recipient + " нет в сети.");
+            clientHandler.sendMessage("Клиента с ником " + recipient + " нет в сети." +
+                    " time: " + new Date());
         }
     }
 

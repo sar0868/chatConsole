@@ -15,11 +15,11 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         this.server = server;
         this.users = new ArrayList<>();
         inMemory = true;
-//        this.users.add(new User("qwe", "qwe", "qwe1"));
-//        this.users.add(new User("asd", "asd", "asd1"));
-//        User admin = new User("admin", "admin", "admin");
+        this.users.add(new User("qwe", "qwe", "qwe1"));
+        this.users.add(new User("asd", "asd", "asd1"));
+        User admin = new User("admin", "admin", "admin");
 //        admin.setRole(Role.ADMIN);
-//        this.users.add(admin);
+        this.users.add(admin);
     }
 
     @Override

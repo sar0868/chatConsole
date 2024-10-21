@@ -44,10 +44,9 @@ public class ClientHandler {
                             continue;
                         }
                     }
-                    sendMessage("""
-                            Отправка и получение сообщений доступна
-                            только после аутентификации (команда: /auth login passowrd)
-                            или после регистрации (команда: /reg login password username)""");
+                    sendMessage("Отправка и получение сообщений доступна\n" +
+                            "только после аутентификации (команда: /auth login passowrd)\n" +
+                            "или после регистрации (команда: /reg login password username)");
                 }
                 // завершение аутентификации и регистрации
                 while (true) {
