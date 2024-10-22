@@ -22,7 +22,9 @@ create table Users_to_Roles(
 
 create table Department(
     id serial primary key,
-    title varchar(100)
+    title varchar(100),
+    managerID smallint not null,
+    foreign key (managerID) references Users(id)
 );
 
 create table Users_to_Departments(
@@ -42,4 +44,15 @@ insert into users (id, login, password, username) values(1, 'admin', 'admin', 'a
 (2, 'qwe', 'qwe', 'qwe1'), (3,'asd','asd', 'asd1');
 
 insert into users_to_roles (userID, roleID) values(1,1),(2,2),(3,2);
+
+select * from users u ;
+select * from roles r ;
+select * from department d ;
+
+insert into roles (id, role) values(3, 'MANADGER');
+
+
+
+
+
 
