@@ -8,4 +8,6 @@ public interface AuthenticatedProvider {
     boolean registration(ClientHandler clientHandler, String login, String password, String username);
 
     boolean isAdmin(ClientHandler clientHandler);
+
+    boolean changeUsername(ClientHandler clientHandler, String username);
 }

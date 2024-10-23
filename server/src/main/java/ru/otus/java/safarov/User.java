@@ -3,7 +3,7 @@ package ru.otus.java.safarov;
 public class User {
         private final String login;
         private final String password;
-        private final String username;
+        private String username;
         private Role role;
 
         public User(String login, String password, String username) {
@@ -25,9 +25,15 @@ public class User {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public Role getRole() {
         return role;
     }
+
+
 
 //    public void setRole(Role role) {
 //        this.role = role;

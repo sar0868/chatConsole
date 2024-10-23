@@ -18,6 +18,9 @@ public class ClientDAO implements ClientService {
     private final Connection connection;
     private final String USERS_QUERY = "select login, password, username from Users";
     private final String USER_QUERY = "select username from Users where login = ? and password = ?";
+    private final String SET_USERNMAME = "update users set username = ? where username = ?";
+    private final String GET_USERID = "select id from users where username = ?";
+
 
     public ClientDAO() throws SQLException {
 //        connection = DriverManager.getConnection(DATABASE_URL);
@@ -152,6 +155,36 @@ public class ClientDAO implements ClientService {
             throw new RuntimeException(e);
         }
         return id != -1;
+    }
+
+    @Override
+    public boolean setUserName(String username, String newUsername) {
+        int result = -1;
+        try (PreparedStatement pst = connection.prepareStatement(SET_USERNMAME)) {
+            pst.setString(1, newUsername);
+            pst.setString(2, username);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result != -1;
+    }
+
+    @Override
+    public int getUserID(String username) {
+        int id = -1;
+        try (PreparedStatement pst = connection.prepareStatement(GET_USERID)) {
+            pst.setString(1, username);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
+                    id = resultSet.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
+
     }
 
     @Override

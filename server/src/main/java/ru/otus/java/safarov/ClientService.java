@@ -13,4 +13,8 @@ public interface ClientService extends AutoCloseable{
     String getRole(String username);
 
     boolean isUserName(String username);
+
+    boolean setUserName(String username, String newUsername);
+
+    int getUserID(String username);
 }

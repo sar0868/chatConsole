@@ -139,6 +139,19 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     public boolean isAdmin(ClientHandler clientHandler) {
         return getRole(clientHandler.getName()) == Role.ADMIN;
     }
+
+    @Override
+    public boolean changeUsername(ClientHandler clientHandler, String username) {
+        if (inMemory){
+            for (User user : users) {
+                if(user.getUsername().equals(clientHandler.getName())){
+                    user.setUsername(username);
+                    return true;
+                }
+            }
+        }
+        return clientDAO.setUserName(clientHandler.getName(), username);
+    }
 }
 
 enum Role {

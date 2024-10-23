@@ -68,6 +68,16 @@ public class ClientHandler {
                         if (msg.startsWith("/kick ")) {
                             kickUser(msg);
                         }
+                        if (msg.startsWith("/changenick ")){
+                            String oldName = getName();
+                            if(changeNick(msg)){
+                                String infoMsg = "Клиент " + oldName + " изменил username на " + getName();
+                                System.out.println(infoMsg);
+                                sendMessage(infoMsg);
+                                break;
+                            }
+                            continue;
+                            }
                     } else {
                         server.broadcastMessage(name + ": " + msg);
                     }
@@ -83,6 +93,19 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private boolean changeNick(String msg) {
+        String[] array = msg.trim().split("\\s+");
+        if (array.length != 2) {
+            sendMessage("Некорректный формат ввода команды /auth");
+            return false;
+        }
+        if (server.getAuthenticatedProvider().changeUsername(this, array[1])){
+            setName(array[1]);
+            return true;
+        }
+        return false;
     }
 
     private void disconnect() {
