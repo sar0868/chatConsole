@@ -68,9 +68,9 @@ public class ClientHandler {
                         if (msg.startsWith("/kick ")) {
                             kickUser(msg);
                         }
-                        if (msg.startsWith("/changenick ")){
+                        if (msg.startsWith("/changenick ")) {
                             String oldName = getName();
-                            if(changeNick(msg)){
+                            if (changeNick(msg)) {
                                 server.changeNick(this, oldName);
                                 String infoMsg = "Клиент " + oldName + " изменил username на " + getName();
                                 System.out.println(infoMsg);
@@ -79,8 +79,12 @@ public class ClientHandler {
                             }
                             String infoMsg = "Не удалось изменить имя клиента " + oldName;
                             System.out.println(infoMsg);
-//                            continue;
+                        }
+                        if (msg.startsWith("/shutdown")) {
+                            if (shutdownServer()) {
+                                break;
                             }
+                        }
                     } else {
                         server.broadcastMessage(name + ": " + msg);
                     }
@@ -98,13 +102,22 @@ public class ClientHandler {
         }).start();
     }
 
+    private boolean shutdownServer() {
+        if (server.getAuthenticatedProvider().isAdmin(this)) {
+            server.broadcastMessage("/exitok");
+            return true;
+        }
+        sendMessage("Вы не являетесь администратором");
+        return false;
+    }
+
     private boolean changeNick(String msg) {
         String[] array = msg.trim().split("\\s+");
         if (array.length != 2) {
             sendMessage("Некорректный формат ввода команды /auth");
             return false;
         }
-        if (server.getAuthenticatedProvider().changeUsername(this, array[1])){
+        if (server.getAuthenticatedProvider().changeUsername(this, array[1])) {
             setName(array[1]);
             return true;
         }
