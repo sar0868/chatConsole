@@ -71,12 +71,15 @@ public class ClientHandler {
                         if (msg.startsWith("/changenick ")){
                             String oldName = getName();
                             if(changeNick(msg)){
+                                server.changeNick(this, oldName);
                                 String infoMsg = "Клиент " + oldName + " изменил username на " + getName();
                                 System.out.println(infoMsg);
                                 sendMessage(infoMsg);
-                                break;
+                                continue;
                             }
-                            continue;
+                            String infoMsg = "Не удалось изменить имя клиента " + oldName;
+                            System.out.println(infoMsg);
+//                            continue;
                             }
                     } else {
                         server.broadcastMessage(name + ": " + msg);

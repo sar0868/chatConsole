@@ -40,6 +40,11 @@ public class Server {
         clients.put(clientHandler.getName(), clientHandler);
     }
 
+    public synchronized void changeNick(ClientHandler clientHandler, String oldUsername){
+        clients.put(clientHandler.getName(), clientHandler);
+        clients.remove(oldUsername);
+    }
+
     public synchronized void broadcastMessage(String msg) {
         for (Map.Entry<String, ClientHandler> client : clients.entrySet()) {
             client.getValue().sendMessage(msg + " time: " + new Date());
