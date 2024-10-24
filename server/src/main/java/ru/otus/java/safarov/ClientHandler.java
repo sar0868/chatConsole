@@ -82,6 +82,7 @@ public class ClientHandler {
                         }
                         if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
+                                System.exit(0);
                                 break;
                             }
                         }
