@@ -82,4 +82,14 @@ public class Server {
         clients.remove(name);
         return true;
     }
+
+    public void shutdown() {
+        for(ClientHandler client: clients.values()){
+            if (client.getName().equals("admin")){
+                continue;
+            }
+            client.exit();
+            client.disconnect();
+        }
+    }
 }

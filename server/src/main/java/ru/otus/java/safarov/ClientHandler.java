@@ -82,8 +82,9 @@ public class ClientHandler {
                         }
                         if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
+                                server.shutdown();
                                 System.exit(0);
-                                break;
+//                                break;
                             }
                         }
                     } else {
@@ -125,7 +126,7 @@ public class ClientHandler {
         return false;
     }
 
-    private void disconnect() {
+    protected void disconnect() {
         server.unsubscribe(this);
         try {
             in.close();
@@ -160,7 +161,7 @@ public class ClientHandler {
         this.name = name;
     }
 
-    private void exit() {
+    protected void exit() {
         sendMessage("/exitok");
         if (name != null) {
             System.out.println("Клиенту " + name + " отравлено сообщение о закрытии");
