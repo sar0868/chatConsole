@@ -36,7 +36,7 @@ public class ClientHandler {
                             }
                             continue;
                         }
-                        if (msg.startsWith("/reg ")) {
+                        if (msg.startsWith("/register ")) {
                             if (regClient(msg)) {
                                 System.out.println("Клиент " + name + " зарегистрирован.");
                                 break;
@@ -46,7 +46,7 @@ public class ClientHandler {
                     }
                     sendMessage("Отправка и получение сообщений доступна\n" +
                             "только после аутентификации (команда: /auth login passowrd)\n" +
-                            "или после регистрации (команда: /reg login password username)");
+                            "или после регистрации (команда: /register login password username)");
                 }
                 // завершение аутентификации и регистрации
                 while (true) {
@@ -192,7 +192,7 @@ public class ClientHandler {
     private boolean regClient(String msg) {
         String[] array = msg.trim().split("\\s+");
         if (array.length != 4) {
-            sendMessage("Некорректный формат ввода команды /reg");
+            sendMessage("Некорректный формат ввода команды /register");
             return false;
         }
         server.getAuthenticatedProvider().registration(this, array[1], array[2], array[3]);
