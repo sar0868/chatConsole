@@ -61,7 +61,7 @@ public class ClientHandler {
                             continue;
                         }
 
-                        if (msg.startsWith("/list")) {
+                        if (msg.startsWith("/activelist")) {
                             server.sendList(this);
                             continue;
                         }
