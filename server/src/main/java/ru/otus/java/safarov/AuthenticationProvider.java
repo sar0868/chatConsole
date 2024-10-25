@@ -156,15 +156,20 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public boolean addDepartment(ClientHandler clientHandler, String title) {
+    public boolean addDepartment(ClientHandler clientHandler, String title, String login) {
         if (isTitleAlreadyExist(title)){
             clientHandler.sendMessage("Указанный отдел уже существует.");
             return false;
         }
+        if (!isLoginAlreadyExist(login)){
+            clientHandler.sendMessage("Нет пользователя с таким логином.");
+            return false;
+        }
         if (inMemory){
             departments.add(new Department(title));
+            return true;
         }
-        if (!inMemory && clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1){
+        if (clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1){
             String msgError = title + " не создан.";
             System.out.println(msgError);
             clientHandler.sendMessage(msgError);

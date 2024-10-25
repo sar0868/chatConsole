@@ -11,7 +11,7 @@ public interface AuthenticatedProvider {
 
     boolean changeUsername(ClientHandler clientHandler, String username);
 
-    boolean addDepartment(ClientHandler clientHandler, String title);
+    boolean addDepartment(ClientHandler clientHandler, String title, String login);
 
 
 }

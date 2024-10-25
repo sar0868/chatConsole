@@ -80,11 +80,19 @@ public class ClientHandler {
                             String infoMsg = "Не удалось изменить имя клиента " + oldName;
                             System.out.println(infoMsg);
                         }
+                        if (msg.startsWith("/department ")){
+                            if (createDepartment(msg)){
+                                String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
+                                System.out.println(resultAddDepartment);
+                                sendMessage(resultAddDepartment);
+
+                            }
+                        }
                         if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
                                 server.shutdown();
+                                disconnect();
                                 System.exit(0);
-//                                break;
                             }
                         }
                     } else {
@@ -102,6 +110,19 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private boolean createDepartment(String msg) {
+        String[] array = msg.trim().split("\\s+");
+        if (array.length != 3){
+            sendMessage("Некорректный формат ввода команды /department");
+            return false;
+        }
+        if(!server.getAuthenticatedProvider().isAdmin(this)){
+            sendMessage("Вы не являетесь администратором");
+            return false;
+        }
+        return server.getAuthenticatedProvider().addDepartment(this, array[1], array[2]);
     }
 
     private boolean shutdownServer() {
