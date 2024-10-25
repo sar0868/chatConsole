@@ -10,4 +10,8 @@ public interface AuthenticatedProvider {
     boolean isAdmin(ClientHandler clientHandler);
 
     boolean changeUsername(ClientHandler clientHandler, String username);
+
+    boolean addDepartment(ClientHandler clientHandler, String title);
+
+
 }

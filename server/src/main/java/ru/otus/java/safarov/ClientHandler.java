@@ -196,8 +196,8 @@ public class ClientHandler {
             sendMessage("Некорректный формат ввода команды /register");
             return false;
         }
-        server.getAuthenticatedProvider().registration(this, array[1], array[2], array[3]);
-        return true;
+//        server.getAuthenticatedProvider().registration(this, array[1], array[2], array[3]);
+        return server.getAuthenticatedProvider().registration(this, array[1], array[2], array[3]);
     }
 
     private void kickUser(String msg) {

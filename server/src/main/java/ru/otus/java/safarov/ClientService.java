@@ -17,4 +17,12 @@ public interface ClientService extends AutoCloseable{
     boolean setUserName(String username, String newUsername);
 
     int getUserID(String username);
+
+    int addDepartment(Department department, String username);
+
+    int getMaxDepartmentID();
+
+    int insertUsersToDepartment(int userId, int departmentID);
+
+    boolean isDepartment(String title);
 }

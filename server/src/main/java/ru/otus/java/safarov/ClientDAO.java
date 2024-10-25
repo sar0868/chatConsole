@@ -20,6 +20,10 @@ public class ClientDAO implements ClientService {
     private final String USER_QUERY = "select username from Users where login = ? and password = ?";
     private final String SET_USERNMAME = "update users set username = ? where username = ?";
     private final String GET_USERID = "select id from users where username = ?";
+    private final String INSERT_DEPARTMENT = "INSERT INTO Department (id, title, managerid) values(?, ?, ?)";
+    private final String GET_DEPARTMENT_ID = "select max(id) as id form department";
+    private final String INSERT_USERS_TO_DEPARTMENTS = "INSERT INTO users_to_departments (userID, departmentID) values(?, ?)";
+
 
 
     public ClientDAO() throws SQLException {
@@ -65,7 +69,7 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public int addUser(int id, User user){
+    public int addUser(int id, User user) {
         int result = -1;
         try {
             connection.setAutoCommit(false);
@@ -81,7 +85,7 @@ public class ClientDAO implements ClientService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if(result != -1 && insertUsersToRoles(id) == -1){
+        if (result != -1 && insertUsersToRoles(id) == -1) {
             try {
                 connection.rollback();
             } catch (SQLException e) {
@@ -97,7 +101,7 @@ public class ClientDAO implements ClientService {
         return result;
     }
 
-    private int insertUsersToRoles(int id){
+    private int insertUsersToRoles(int id) {
         int result = -1;
         try (PreparedStatement pst = connection.prepareStatement(INSERT_USERS_TO_ROLES)) {
             pst.setInt(1, id);
@@ -185,6 +189,85 @@ public class ClientDAO implements ClientService {
         }
         return id;
 
+    }
+
+    @Override
+    public int addDepartment(Department department, String username) {
+        int result = -1;
+        int departmentID = getMaxDepartmentID() + 1;
+        int userID = getUserID(username);
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try (PreparedStatement pst = connection.prepareStatement(INSERT_DEPARTMENT)) {
+            pst.setInt(1, departmentID);
+            pst.setString(2, department.getTitle());
+            pst.setInt(3, userID);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (result != -1 && insertUsersToDepartment(userID, departmentID) == -1) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return -1;
+        }
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+
+    @Override
+    public int getMaxDepartmentID() {
+        int id = -1;
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(GET_DEPARTMENT_ID)) {
+                while (resultSet.next()) {
+                    id = resultSet.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
+    }
+
+    @Override
+    public int insertUsersToDepartment(int userId, int departmentID){
+        int result = -1;
+        try (PreparedStatement pst = connection.prepareStatement(INSERT_USERS_TO_DEPARTMENTS)) {
+            pst.setInt(1, userId);
+            pst.setInt(2, departmentID);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    @Override
+    public boolean isDepartment(String title) {
+        int id = -1;
+        try (PreparedStatement pst = connection.prepareStatement("SELECT id FROM departments where title = ?")) {
+            pst.setString(1, title);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
+                    id = resultSet.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id != -1;
     }
 
     @Override

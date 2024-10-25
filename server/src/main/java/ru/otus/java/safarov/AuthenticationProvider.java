@@ -8,12 +8,14 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     private final Server server;
     private final List<User> users;
+    private final List<Department> departments;
     private ClientDAO clientDAO;
     private boolean inMemory;
 
     public AuthenticationProvider(Server server) {
         this.server = server;
         this.users = new ArrayList<>();
+        this.departments = new ArrayList<>();
         inMemory = true;
         this.users.add(new User("qwe", "qwe", "qwe1"));
         this.users.add(new User("asd", "asd", "asd1"));
@@ -152,8 +154,39 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         return clientDAO.setUserName(clientHandler.getName(), username);
     }
+
+    @Override
+    public boolean addDepartment(ClientHandler clientHandler, String title) {
+        if (isTitleAlreadyExist(title)){
+            clientHandler.sendMessage("Указанный отдел уже существует.");
+            return false;
+        }
+        if (inMemory){
+            departments.add(new Department(title));
+        }
+        if (!inMemory && clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1){
+            String msgError = title + " не создан.";
+            System.out.println(msgError);
+            clientHandler.sendMessage(msgError);
+            return false;
+        }
+        clientHandler.sendMessage("/departmentok " + title);
+        return true;
+    }
+
+    private boolean isTitleAlreadyExist(String title) {
+        if(inMemory){
+            for (Department department : departments) {
+                if (department.getTitle().equals(title)){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return clientDAO.isDepartment(title);
+    }
 }
 
-enum Role {
-    ADMIN, USER
-}
+//enum Role {
+//    ADMIN, USER
+//}
