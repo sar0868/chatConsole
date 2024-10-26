@@ -22,7 +22,7 @@ create table Users_to_Roles(
 
 create table Department(
     id serial primary key,
-    title varchar(100),
+    title varchar(100) not null unique,
     managerID smallint not null,
     foreign key (managerID) references Users(id)
 );
@@ -37,8 +37,7 @@ create table Users_to_Departments(
 
 
 insert into roles (id, role) values(1, 'ADMIN'),
-(2, 'MANAGER'),
-(3, 'USER');
+(2, 'USER');
 
 insert into users (id, login, password, username) values(1, 'admin', 'admin', 'admin'),
 (2, 'qwe', 'qwe', 'qwe1'), (3,'asd','asd', 'asd1');
@@ -48,12 +47,14 @@ insert into users_to_roles (userID, roleID) values(1,1),(2,2),(3,2);
 select * from users u ;
 select * from roles r ;
 select * from department d ;
+select * from users_to_roles utr;
+select * from users_to_departments utd ;
 
 insert into roles (id, role) values(3, 'MANADGER');
 
+select max(id) as id from department;
 
-
-
-
+delete from department where id = 2;
+SELECT id FROM department d where title = 'otd';
 
 
