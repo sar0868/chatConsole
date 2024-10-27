@@ -1,5 +1,7 @@
 package ru.otus.java.safarov;
 
+import java.util.Set;
+
 public interface AuthenticatedProvider {
     void initialize();
 
@@ -12,6 +14,8 @@ public interface AuthenticatedProvider {
     boolean changeUsername(ClientHandler clientHandler, String username);
 
     boolean addDepartment(ClientHandler clientHandler, String title, String login);
+
+    Set<Department> getDepartments();
 
 
 }

@@ -2,26 +2,29 @@ package ru.otus.java.safarov;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AuthenticationProvider implements AuthenticatedProvider {
 
     private final Server server;
     private final List<User> users;
-    private final List<Department> departments;
+    private final Set<Department> departments;
     private ClientDAO clientDAO;
     private boolean inMemory;
 
     public AuthenticationProvider(Server server) {
         this.server = server;
         this.users = new ArrayList<>();
-        this.departments = new ArrayList<>();
+        this.departments = new HashSet<>();
         inMemory = true;
         this.users.add(new User("qwe", "qwe", "qwe1"));
         this.users.add(new User("asd", "asd", "asd1"));
         User admin = new User("admin", "admin", "admin");
-//        admin.setRole(Role.ADMIN);
+        //        admin.setRole(Role.ADMIN);
         this.users.add(admin);
+
     }
 
     @Override
@@ -190,8 +193,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         return clientDAO.isDepartment(title);
     }
-}
 
-//enum Role {
-//    ADMIN, USER
-//}
+    @Override
+    public Set<Department> getDepartments() {
+        return clientDAO.getDepartments();
+    }
+}

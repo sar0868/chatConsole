@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Set;
 
 public class ClientHandler {
     private final Server server;
@@ -68,7 +69,7 @@ public class ClientHandler {
                         if (msg.startsWith("/kick ")) {
                             kickUser(msg);
                         }
-                        if (msg.startsWith("/changenick ")) {
+                        if (msg.startsWith("/changenick")) {
                             String oldName = getName();
                             if (changeNick(msg)) {
                                 server.changeNick(this, oldName);
@@ -80,13 +81,16 @@ public class ClientHandler {
                             String infoMsg = "Не удалось изменить имя клиента " + oldName;
                             System.out.println(infoMsg);
                         }
-                        if (msg.startsWith("/department ")){
+                        if (msg.startsWith("/department")){
                             if (createDepartment(msg)){
                                 String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
                                 System.out.println(resultAddDepartment);
                                 sendMessage(resultAddDepartment);
 
                             }
+                        }
+                        if(msg.startsWith("/listdepartments")){
+                            getDepartments();
                         }
                         if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
@@ -110,6 +114,18 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private void getDepartments() {
+        Set<Department> departments = server.getAuthenticatedProvider().getDepartments();
+        String msgDepartments = "departments: ";
+        for (Department department : departments) {
+            msgDepartments += department.getTitle() + " ";
+        }
+        if (msgDepartments.equals("departments: ")){
+            msgDepartments += "empty";
+        }
+        sendMessage(msgDepartments);
     }
 
     private boolean createDepartment(String msg) {

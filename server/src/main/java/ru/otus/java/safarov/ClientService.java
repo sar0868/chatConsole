@@ -2,6 +2,7 @@ package ru.otus.java.safarov;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 public interface ClientService extends AutoCloseable{
     List<User> getAll();
@@ -25,4 +26,6 @@ public interface ClientService extends AutoCloseable{
     int insertUsersToDepartment(int userId, int departmentID);
 
     boolean isDepartment(String title);
+
+    Set<Department> getDepartments();
 }
