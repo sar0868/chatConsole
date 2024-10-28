@@ -15,7 +15,8 @@ public interface AuthenticatedProvider {
 
     boolean addDepartment(ClientHandler clientHandler, String title, String login);
 
+
     Set<Department> getDepartments();
 
-
+    boolean addGroup(ClientHandler clientHandler, String title, String password);
 }

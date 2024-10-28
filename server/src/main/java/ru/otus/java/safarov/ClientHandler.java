@@ -57,19 +57,17 @@ public class ClientHandler {
                             exit();
                             break;
                         }
-                        if (msg.startsWith("/w ")) {
+                        else if (msg.startsWith("/w ")) {
                             personalMsg(msg);
-                            continue;
                         }
 
-                        if (msg.startsWith("/activelist")) {
+                        else if (msg.startsWith("/activelist")) {
                             server.sendList(this);
-                            continue;
                         }
-                        if (msg.startsWith("/kick ")) {
+                        else if (msg.startsWith("/kick ")) {
                             kickUser(msg);
                         }
-                        if (msg.startsWith("/changenick")) {
+                        else if (msg.startsWith("/changenick")) {
                             String oldName = getName();
                             if (changeNick(msg)) {
                                 server.changeNick(this, oldName);
@@ -81,7 +79,7 @@ public class ClientHandler {
                             String infoMsg = "Не удалось изменить имя клиента " + oldName;
                             System.out.println(infoMsg);
                         }
-                        if (msg.startsWith("/department")){
+                        else if (msg.startsWith("/department")){
                             if (createDepartment(msg)){
                                 String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
                                 System.out.println(resultAddDepartment);
@@ -89,15 +87,23 @@ public class ClientHandler {
 
                             }
                         }
-                        if(msg.startsWith("/listdepartments")){
+                        else if(msg.startsWith("/listdepartments")){
                             getDepartments();
                         }
-                        if (msg.startsWith("/shutdown")) {
+                        else if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
                                 server.shutdown();
                                 disconnect();
                                 System.exit(0);
                             }
+                        } else if (msg.startsWith("/group ")) {
+                            if (createGroup(msg)){
+                                String resultAddGroup = "Группа " + msg.trim().split("\\s+")[1] + " создана";
+                                System.out.println(resultAddGroup);
+                                sendMessage(resultAddGroup);
+                            }
+                        } else {
+                            sendMessage("Не корректный ввод: " + msg);
                         }
                     } else {
                         server.broadcastMessage(name + ": " + msg);
@@ -116,16 +122,26 @@ public class ClientHandler {
         }).start();
     }
 
+    private boolean createGroup(String msg) {
+//        /group <title> <password>
+        String[] array = msg.trim().split("\\s+");
+        if (array.length != 3){
+            sendMessage("Некорректный формат ввода команды /group");
+            return false;
+        }
+        return server.getAuthenticatedProvider().addGroup(this, array[1], array[2]);
+    }
+
     private void getDepartments() {
         Set<Department> departments = server.getAuthenticatedProvider().getDepartments();
-        String msgDepartments = "departments: ";
+        StringBuilder msgDepartments = new StringBuilder("departments: ");
         for (Department department : departments) {
-            msgDepartments += department.getTitle() + " ";
+            msgDepartments.append(department.getTitle()).append(" ");
         }
-        if (msgDepartments.equals("departments: ")){
-            msgDepartments += "empty";
+        if (msgDepartments.toString().equals("departments: ")){
+            msgDepartments.append("empty");
         }
-        sendMessage(msgDepartments);
+        sendMessage(msgDepartments.toString());
     }
 
     private boolean createDepartment(String msg) {

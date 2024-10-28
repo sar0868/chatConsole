@@ -27,6 +27,14 @@ create table Department(
     foreign key (managerID) references Users(id)
 );
 
+create table Groups(
+    id serial primary key,
+    title varchar(100) unique,
+    adminID smallint not null,
+    foreign key (adminID) references Users(id)
+);
+
+
 create table Users_to_Departments(
     userID smallint not null,
     departmentID smallint not null,

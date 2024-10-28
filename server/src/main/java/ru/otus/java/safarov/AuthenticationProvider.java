@@ -11,6 +11,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     private final Server server;
     private final List<User> users;
     private final Set<Department> departments;
+    private final Set<Group> groups;
     private ClientDAO clientDAO;
     private boolean inMemory;
 
@@ -18,6 +19,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         this.server = server;
         this.users = new ArrayList<>();
         this.departments = new HashSet<>();
+        this.groups = new HashSet<>();
         inMemory = true;
         this.users.add(new User("qwe", "qwe", "qwe1"));
         this.users.add(new User("asd", "asd", "asd1"));
@@ -192,6 +194,55 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             return false;
         }
         return clientDAO.isDepartment(title);
+    }
+
+    @Override
+    public boolean addGroup(ClientHandler clientHandler, String title, String password) {
+        if (isGroupAlreadyExist(title)){
+            clientHandler.sendMessage("Указанная группа уже существует.");
+            return false;
+        }
+        if (inMemory){
+            for (Group group : groups) {
+                if (group.getTitle().equals(title)){
+                    clientHandler.sendMessage("Указанная группа уже существует.");
+                    return false;
+                }
+            }
+            groups.add(new Group(nextIDGroup(), title, password));
+            return true;
+        }
+        if (clientDAO.addGroup(title, password, clientHandler.getName()) == -1){
+            String msgError = title + " не создан.";
+            System.out.println(msgError);
+            clientHandler.sendMessage(msgError);
+            return false;
+        }
+        clientHandler.sendMessage("/groupok " + title);
+        return true;
+    }
+
+    private int nextIDGroup() {
+        int id = 0;
+        for (Group group : groups) {
+            int el = group.getId();
+            if (id > el){
+                id = el;
+            }
+        }
+        return id+1;
+    }
+
+    private boolean isGroupAlreadyExist(String title) {
+        if (inMemory){
+            for (Group group : groups) {
+                if (group.getTitle().equals(title)){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return clientDAO.isGroup(title);
     }
 
     @Override

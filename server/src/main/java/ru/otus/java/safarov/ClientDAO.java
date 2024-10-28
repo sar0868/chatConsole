@@ -171,7 +171,7 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public int getUserID(String username) {
+    public int  getUserID(String username) {
         int id = -1;
         String GET_USERID = "select id from users where username = ?";
         try (PreparedStatement pst = connection.prepareStatement(GET_USERID)) {
@@ -191,7 +191,8 @@ public class ClientDAO implements ClientService {
     @Override
     public int addDepartment(Department department, String username) {
         int result = -1;
-        int departmentID = getMaxDepartmentID() + 1;
+        String table = "department";
+        int departmentID = getMaxID(table) + 1;
         int userID = getUserID(username);
         try {
             connection.setAutoCommit(false);
@@ -225,16 +226,14 @@ public class ClientDAO implements ClientService {
 
 
     @Override
-    public int getMaxDepartmentID() {
+    public int getMaxID(String table) {
         int id = -1;
+        String stmt = "select max(id) as id from " + table;
         try (Statement statement = connection.createStatement()) {
-            String GET_DEPARTMENT_ID = "select max(id) as id from department";
-            try (ResultSet resultSet = statement.executeQuery(GET_DEPARTMENT_ID)) {
+            try (ResultSet resultSet = statement.executeQuery(stmt)) {
                 while (resultSet.next()) {
                     id = resultSet.getInt("id");
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
             return id;
         } catch (SQLException e) {
@@ -288,6 +287,74 @@ public class ClientDAO implements ClientService {
             throw new RuntimeException(e);
         }
         return departments;
+    }
+
+    @Override
+    public boolean isGroup(String title) {
+        int id = -1;
+        String isTitle = "select id from groups where title = ?";
+        try (PreparedStatement pst = connection.prepareStatement(isTitle)) {
+            pst.setString(1, title);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
+                    id = resultSet.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id != -1;
+    }
+
+    @Override
+    public int addGroup(String title, String password, String username) {
+        int result = -1;
+        int groupID = getMaxID("groups") + 1;
+        int userID = getUserID(username);
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        String INSERT_DEPARTMENT = "insert into groups(id, title, adminid, password) values(?, ?, ?, ?);";
+        try (PreparedStatement pst = connection.prepareStatement(INSERT_DEPARTMENT)) {
+            pst.setInt(1, groupID);
+            pst.setString(2, title);
+            pst.setInt(3, userID);
+            pst.setString(4, password);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (result != -1 && insertUsersToGroups(userID, groupID) == -1) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return -1;
+        }
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+
+    }
+
+    @Override
+    public int insertUsersToGroups(int userId, int groupID) {
+        int result = -1;
+        String INSERT_USERS_TO_DEPARTMENTS = "insert into users_to_groups (userID, groupID) values(?, ?)";
+        try (PreparedStatement pst = connection.prepareStatement(INSERT_USERS_TO_DEPARTMENTS)) {
+            pst.setInt(1, userId);
+            pst.setInt(2, groupID);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
     @Override
