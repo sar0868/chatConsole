@@ -198,10 +198,17 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public boolean addGroup(ClientHandler clientHandler, String title, String password) {
+        if(title.trim().length() < 3 || password.trim().length() < 6){
+            clientHandler.sendMessage("""
+                    Название группы должно быть 3 более символов,
+                    длина пароля 6 и более символов""");
+            return false;
+        }
         if (isGroupAlreadyExist(title)){
             clientHandler.sendMessage("Указанная группа уже существует.");
             return false;
         }
+
         if (inMemory){
             for (Group group : groups) {
                 if (group.getTitle().equals(title)){

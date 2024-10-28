@@ -27,14 +27,6 @@ create table Department(
     foreign key (managerID) references Users(id)
 );
 
-create table Groups(
-    id serial primary key,
-    title varchar(100) unique,
-    adminID smallint not null,
-    foreign key (adminID) references Users(id)
-);
-
-
 create table Users_to_Departments(
     userID smallint not null,
     departmentID smallint not null,
@@ -42,6 +34,45 @@ create table Users_to_Departments(
     foreign key (userID) references Users(id),
     foreign key (departmentID) references Department(id)
 );
+
+create table Groups(
+    id serial primary key,
+    title varchar(100) unique,
+    adminID smallint not null,
+    password varchar(100) not null,
+    foreign key (adminID) references Users(id)
+);
+
+
+create table Users_to_Groups(
+    userID smallint not null,
+    groupID smallint not null,
+    primary key(userID, groupID),
+    foreign key (userID) references Users(id),
+    foreign key (groupID) references Groups(id)
+);
+
+create table Messages(
+	id serial primary key,
+	userID smallint not null,
+	groupID smallint not null,
+	dateMSG timestamptz not null,
+	msg text not null,
+	foreign key (userID) references Users(id),
+    foreign key (groupID) references Groups(id)
+);
+
+alter table Messages add
+	msg text not null;
+
+
+
+select * from messages ;
+insert into messages
+
+insert into users_to_groups (userID, groupID) values(1, 1);
+
+select max(id) as id from ('groups');
 
 
 insert into roles (id, role) values(1, 'ADMIN'),
@@ -65,4 +96,6 @@ select max(id) as id from department;
 delete from department where id = 2;
 SELECT id FROM department d where title = 'otd';
 
-
+select * from groups;
+select * from users_to_groups
+insert into groups(id, title, adminid) values(1, 'gr2', 1);
