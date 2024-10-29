@@ -68,7 +68,15 @@ alter table Messages add
 
 
 select * from messages ;
-insert into messages
+insert into messages(id, userid, groupid, datemsg, msg) values(
+3, 1, 1, 'Mon Oct 13 15:21:15 MSK 2024', 'hello'
+);
+
+
+--выбрать дату старше 1 часа interval '1 hour'
+-- 2 недели - interval '14 day'
+select * from messages
+where datemsg < current_timestamp - interval '14 day'; 
 
 insert into users_to_groups (userID, groupID) values(1, 1);
 
