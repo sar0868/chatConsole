@@ -256,4 +256,29 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     public Set<Department> getDepartments() {
         return clientDAO.getDepartments();
     }
+
+    @Override
+    public String getGroupTitle(ClientHandler clientHandler) {
+        if(inMemory){
+            return "";
+        }
+        return clientDAO.getGroupTitle(clientHandler.getName());
+    }
+
+    @Override
+    public void enterGroup(ClientHandler clientHandler, String groupTitle, String password) {
+//        String nameIsGroup = getUserNameByLoginAndPassword(login, password);
+//        if (authName == null) {
+//            clientHandler.sendMessage("Некорректный логин/пароль");
+//            return false;
+//        }
+//        if (server.isName(authName)) {
+//            clientHandler.sendMessage("Имя пользователя занято.");
+//            return false;
+//        }
+//        clientHandler.setName(authName);
+//        server.subscribe(clientHandler);
+//        clientHandler.sendMessage("/authok " + authName);
+//        return true;
+    }
 }

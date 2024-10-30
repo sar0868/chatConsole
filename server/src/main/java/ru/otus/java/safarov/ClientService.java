@@ -35,5 +35,7 @@ public interface ClientService extends AutoCloseable{
 
     int insertUsersToGroups(int userId, int groupID);
 
+    String getGroupTitle(String username);
+
 //    int getMaxGroupID();
 }

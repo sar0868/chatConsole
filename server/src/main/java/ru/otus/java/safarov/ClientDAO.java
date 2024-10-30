@@ -358,6 +358,12 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
+    public String getGroupTitle(String username) {
+        String GET_GROUP_TITLE = "select ";
+        return "";
+    }
+
+    @Override
     public void close() throws Exception {
         connection.close();
     }

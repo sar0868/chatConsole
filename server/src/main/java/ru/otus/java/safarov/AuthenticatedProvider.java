@@ -19,4 +19,8 @@ public interface AuthenticatedProvider {
     Set<Department> getDepartments();
 
     boolean addGroup(ClientHandler clientHandler, String title, String password);
+
+    String getGroupTitle(ClientHandler clientHandler);
+
+    void enterGroup(ClientHandler clientHandler, String groupTitle, String password);
 }

@@ -13,6 +13,7 @@ public class ClientHandler {
     private final DataInputStream in;
     private final DataOutputStream out;
     private String name;
+    private String groupTitle;
 
     public ClientHandler(Server server, Socket socket) throws IOException {
         this.server = server;
@@ -33,6 +34,7 @@ public class ClientHandler {
                         if (msg.startsWith("/auth ")) {
                             if (authClient(msg)) {
                                 System.out.println("Клиент " + name + " прошел аутентификацию.");
+                                getGroup();
                                 break;
                             }
                             continue;
@@ -102,6 +104,8 @@ public class ClientHandler {
                                 System.out.println(resultAddGroup);
                                 sendMessage(resultAddGroup);
                             }
+                        } else if (msg.startsWith("/enter ")) {
+                            enterGroup(msg);
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -120,6 +124,20 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private void enterGroup(String msg) {
+        // /enter groupTitle password_group
+        String[] array = msg.trim().split("\\s+");
+        if (array.length != 3){
+            sendMessage("Некорректный формат ввода команды /enter");
+        } else {
+            server.getAuthenticatedProvider().enterGroup(this, array[1], array[2]);
+        }
+    }
+
+    private void getGroup() {
+        groupTitle = server.getAuthenticatedProvider().getGroupTitle(this);;
     }
 
     private boolean createGroup(String msg) {
