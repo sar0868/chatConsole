@@ -105,5 +105,36 @@ delete from department where id = 2;
 SELECT id FROM department d where title = 'otd';
 
 select * from groups;
-select * from users_to_groups
+select * from users_to_groups;
+
 insert into groups(id, title, adminid) values(1, 'gr2', 1);
+
+insert into users_to_groups (userid, groupid) values
+(1, 1),(2, 1);
+
+select title from "groups" gr
+inner join "users_to_groups" utg on gr.id = utg.groupid 
+inner join users u on utg.userid = u.id 
+where login = 'admin';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

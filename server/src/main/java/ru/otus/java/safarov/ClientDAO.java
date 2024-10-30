@@ -358,9 +358,23 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public String getGroupTitle(String username) {
-        String GET_GROUP_TITLE = "select ";
-        return "";
+    public List<String> getGroupTitle(String username) {
+        List<String> titleGroups = new ArrayList<>();
+        String GET_GROUP_TITLE = "select title from groups gr" +
+                "inner join users_to_groups utg on gr.id = utg.groupid " +
+                "inner join users u on utg.userid = u.id " +
+                "where username = ?";
+        try(PreparedStatement pst = connection.prepareStatement(GET_GROUP_TITLE)){
+            pst.setString(1, username);
+            try(ResultSet resultSet = pst.executeQuery()){
+                while (resultSet.next()){
+                    titleGroups.add(resultSet.getString("title"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return titleGroups;
     }
 
     @Override

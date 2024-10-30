@@ -34,7 +34,6 @@ public class ClientHandler {
                         if (msg.startsWith("/auth ")) {
                             if (authClient(msg)) {
                                 System.out.println("Клиент " + name + " прошел аутентификацию.");
-                                getGroup();
                                 break;
                             }
                             continue;

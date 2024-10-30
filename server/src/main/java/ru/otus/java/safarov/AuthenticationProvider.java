@@ -262,7 +262,12 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         if(inMemory){
             return "";
         }
-        return clientDAO.getGroupTitle(clientHandler.getName());
+        List<String> titleGroups = clientDAO.getGroupTitle(clientHandler.getName());
+//        if (titleGroups != null && titleGroups.contains(clientHandler......)){
+//
+//            return "";
+//        }
+        return "";
     }
 
     @Override
