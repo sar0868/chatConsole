@@ -37,5 +37,9 @@ public interface ClientService extends AutoCloseable{
 
     List<String> getGroupTitle(String username);
 
+    boolean updateDateVisit(String authName);
+
+    boolean setDateVisit(String username);
+
 //    int getMaxGroupID();
 }

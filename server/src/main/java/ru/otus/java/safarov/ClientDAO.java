@@ -378,6 +378,38 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
+    public boolean updateDateVisit(String authName) {
+        String stmt = "update date_visit set datevisit = (select now()) where userid = ?";
+        int result;
+        int userID = getUserID(authName);
+        try(PreparedStatement pst  = connection.prepareStatement(stmt)){
+            pst.setInt(1, userID);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result == 1;
+    }
+
+    @Override
+    public boolean setDateVisit(String username) {
+        int result;
+        String stmt = "insert into date_visit(id , userid, datevisit) values(?,?, (select now()))";
+        int recordID = getMaxID("date_visit")+1;
+        int userID = getUserID(username);
+//        String date = String.valueOf(new Date());
+        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setInt(1, recordID);
+            pst.setInt(2, userID);
+//            pst.setString(3, date);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result == 1;
+    }
+
+    @Override
     public void close() throws Exception {
         connection.close();
     }

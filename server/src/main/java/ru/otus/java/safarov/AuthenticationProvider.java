@@ -65,6 +65,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(authName);
         server.subscribe(clientHandler);
+        if (!clientDAO.updateDateVisit(authName)){
+            System.out.println("date don't added");
+        }
         clientHandler.sendMessage("/authok " + authName);
         return true;
     }
@@ -98,6 +101,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(username);
         server.subscribe(clientHandler);
+        if (!clientDAO.setDateVisit(username)){
+            System.out.println("date don't insert");
+        }
         clientHandler.sendMessage("/regok " + username);
         return true;
     }

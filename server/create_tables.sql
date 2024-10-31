@@ -66,11 +66,51 @@ alter table Messages add
 	msg text not null;
 
 
+create table date_visit (
+	id serial primary key,
+	userID smallint not null,
+	datevisit timestamptz not null,
+	foreign key (userID) references Users(id)
+);
+
+create table request_add_group (
+	id serial primary key,
+	userID smallint not null,
+	groupID smallint not null,
+	daterequest timestamptz not null,
+	foreign key (userID) references Users(id),
+    foreign key (groupID) references Groups(id)
+);
+
+
+select rag.id, username, title from request_add_group rag 
+inner join users u on rag.userid = u.id 
+inner join "groups" g ON rag.groupid = g.id 
+where rag.groupid = 1 and 
+rag.daterequest > 'Mon Oct 13 15:21:15 MSK 2024';
+
+delete from request_add_group 
+where id in (select rag.id from request_add_group rag 
+inner join users u on rag.userid = u.id 
+inner join "groups" g ON rag.groupid = g.id 
+where rag.groupid = 1 and 
+rag.daterequest > 'Mon Oct 13 15:21:15 MSK 2024');
+-- id = полученному id запроса
+
+
+select * from request_add_group rag ;
+select * from date_visit dv ;
+
+
+insert into date_visit(id , userid, datevisit) values(2,6, (select now()));
+update date_visit set datevisit = (select now()) where userid = 6;
+
 
 select * from messages ;
 insert into messages(id, userid, groupid, datemsg, msg) values(
 3, 1, 1, 'Mon Oct 13 15:21:15 MSK 2024', 'hello'
 );
+
 
 
 --выбрать дату старше 1 часа interval '1 hour'
@@ -115,9 +155,9 @@ insert into users_to_groups (userid, groupid) values
 select title from "groups" gr
 inner join "users_to_groups" utg on gr.id = utg.groupid 
 inner join users u on utg.userid = u.id 
-where login = 'admin';
+where login = 'asda';
 
-
+select now();
 
 
 
