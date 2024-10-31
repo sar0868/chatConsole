@@ -69,7 +69,7 @@ alter table Messages add
 create table date_visit (
 	id serial primary key,
 	userID smallint not null,
-	datevisit timestamptz ,
+	datevisit timestamptz not null,
 	foreign key (userID) references Users(id)
 );
 
