@@ -66,14 +66,16 @@ alter table Messages add
 	msg text not null;
 
 
-create table date_visit (
-	id serial primary key,
+create table Date_visit (
+    id serial primary key,
 	userID smallint not null,
 	datevisit timestamptz not null,
 	foreign key (userID) references Users(id)
 );
 
-create table request_add_group (
+select * from date_visit ;
+
+create table Request_add_group (
 	id serial primary key,
 	userID smallint not null,
 	groupID smallint not null,
@@ -83,7 +85,7 @@ create table request_add_group (
 );
 
 select * from date_visit dv ;
-insert into date_visit (id, userid, datevisit) values(2, 2, (select now()));
+insert into date_visit (id, userid, datevisit) values(1, 1, (select now()));
 
 select now();
 
@@ -174,7 +176,6 @@ select * from date_visit dv;
 drop table date_visit;
 
 
-INSERT INTO date_visit (id, userid) values(3, 6);
 
 
 

@@ -379,12 +379,22 @@ public class ClientDAO implements ClientService {
 
     @Override
     public boolean updateDateVisit(String authName) {
-        String stmt = "update date_visit set datevisit = (select now()) where userid = ?";
+        String stmt = "update Date_visit set datevisit = (select now()) where userid = ?";
         int result = -1;
         int userID = getUserID(authName);
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         try(PreparedStatement pst  = connection.prepareStatement(stmt)){
             pst.setInt(1, userID);
             result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            connection.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -392,15 +402,25 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public boolean setDateVisit(String username) {
+    public boolean addDateVisit(String username) {
         int result = -1;
-        String stmt = "insert into date_visit (id, userid) values(?, ?);";
+        String stmt = "insert into Date_visit(id, userID, datevisit) values(?, ?, (select now()))";
         int recordID = getMaxID("date_visit")+1;
         int userID = getUserID(username);
-        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setInt(1, recordID);
             pst.setInt(2, userID);
             result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            connection.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

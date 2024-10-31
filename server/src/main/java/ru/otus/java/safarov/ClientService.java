@@ -39,7 +39,7 @@ public interface ClientService extends AutoCloseable{
 
     boolean updateDateVisit(String authName);
 
-    boolean setDateVisit(String username);
+    boolean addDateVisit(String username);
 
 //    int getMaxGroupID();
 }
