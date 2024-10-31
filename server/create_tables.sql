@@ -82,6 +82,10 @@ create table request_add_group (
     foreign key (groupID) references Groups(id)
 );
 
+select * from date_visit dv ;
+insert into date_visit (id, userid, datevisit) values(2, 2, (select now()));
+
+select now();
 
 select rag.id, username, title from request_add_group rag 
 inner join users u on rag.userid = u.id 
