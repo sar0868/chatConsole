@@ -69,7 +69,7 @@ alter table Messages add
 create table date_visit (
 	id serial primary key,
 	userID smallint not null,
-	datevisit timestamptz not null,
+	datevisit timestamptz ,
 	foreign key (userID) references Users(id)
 );
 
@@ -102,8 +102,14 @@ select * from request_add_group rag ;
 select * from date_visit dv ;
 
 
-insert into date_visit(id , userid, datevisit) values(2,6, (select now()));
-update date_visit set datevisit = (select now()) where userid = 6;
+insert into date_visit(id , userid, datevisit) values(1,1, (select now()));
+insert into date_visit(id , userid) values(2,2);
+
+update date_visit set datevisit = (select now()) where userid = 2;
+
+--Thu Oct 31 14:10:04 MSK 2024
+insert into date_visit(id , userid, datevisit) values(2,2, 'Thu Oct 31 14:10:04 MSK 2024');
+update date_visit set datevisit = (select now()) where userid = 2;
 
 
 select * from messages ;
@@ -158,11 +164,13 @@ inner join users u on utg.userid = u.id
 where login = 'asda';
 
 select now();
+insert into date_visit(datevisit, id , userid) values((select now()), 3, 6);
+select * from date_visit dv;
+
+drop table date_visit;
 
 
-
-
-
+INSERT INTO date_visit (id, userid) values(3, 6);
 
 
 

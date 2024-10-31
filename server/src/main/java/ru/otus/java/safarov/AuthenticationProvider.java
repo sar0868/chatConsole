@@ -101,9 +101,10 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(username);
         server.subscribe(clientHandler);
-        if (!clientDAO.setDateVisit(username)){
-            System.out.println("date don't insert");
+        if(!clientDAO.setDateVisit(username)){
+            System.out.println("date don't created");
         }
+        clientDAO.updateDateVisit(username);
         clientHandler.sendMessage("/regok " + username);
         return true;
     }
