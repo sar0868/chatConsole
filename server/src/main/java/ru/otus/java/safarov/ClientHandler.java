@@ -105,7 +105,13 @@ public class ClientHandler {
                             }
                         } else if (msg.startsWith("/enter ")) {
                             enterGroup(msg);
-                        } else {
+                        } else if (msg.startsWith("/addgroup ")) {
+                            requestAddGroup(msg);
+                        } else if (msg.startsWith("/addgroup ")) {
+                            requestAddGroup(msg);
+                        }
+
+                        else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
                     } else {
@@ -125,6 +131,9 @@ public class ClientHandler {
         }).start();
     }
 
+    private void requestAddGroup(String msg) {
+    }
+
     private void enterGroup(String msg) {
         // /enter groupTitle password_group
         String[] array = msg.trim().split("\\s+");
@@ -136,7 +145,7 @@ public class ClientHandler {
     }
 
     private void getGroup() {
-        groupTitle = server.getAuthenticatedProvider().getGroupTitle(this);;
+        groupTitle = server.getAuthenticatedProvider().getGroupTitle(this);
     }
 
     private boolean createGroup(String msg) {
@@ -266,7 +275,6 @@ public class ClientHandler {
             sendMessage("Некорректный формат ввода команды /register");
             return false;
         }
-//        server.getAuthenticatedProvider().registration(this, array[1], array[2], array[3]);
         return server.getAuthenticatedProvider().registration(this, array[1], array[2], array[3]);
     }
 
