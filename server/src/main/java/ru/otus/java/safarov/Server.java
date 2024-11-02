@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ru.otus.java.safarov.ServerApplication.logger;
+
 public class Server {
     private final int port;
     private final Map<String, ClientHandler> clients;
@@ -22,7 +24,7 @@ public class Server {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Сервер запущен. Порт: " + port);
+            logger.info("Сервер запущен. Порт: {}", port);
             while (true) {
                 Socket socket = serverSocket.accept();
                 new ClientHandler(this, socket);

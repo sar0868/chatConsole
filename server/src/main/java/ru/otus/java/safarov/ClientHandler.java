@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Set;
 
+import static ru.otus.java.safarov.ServerApplication.logger;
+
 public class ClientHandler {
     private final Server server;
     private final Socket socket;
@@ -22,7 +24,6 @@ public class ClientHandler {
         this.out = new DataOutputStream(socket.getOutputStream());
         new Thread(() -> {
             try {
-                System.out.println("Клиент подключился");
                 // цикл аутентификации и регистрации
                 while (true) {
                     String msg = in.readUTF();
@@ -33,22 +34,22 @@ public class ClientHandler {
                         }
                         if (msg.startsWith("/auth ")) {
                             if (authClient(msg)) {
-                                System.out.println("Клиент " + name + " прошел аутентификацию.");
+                                logger.info("Клиент {} прошел аутентификацию.", name);
                                 break;
                             }
                             continue;
                         }
                         if (msg.startsWith("/register ")) {
                             if (regClient(msg)) {
-                                System.out.println("Клиент " + name + " зарегистрирован.");
+                                logger.info("Клиент {} зарегистрирован.", name);
                                 break;
                             }
                             continue;
                         }
                     }
                     sendMessage("Отправка и получение сообщений доступна\n" +
-                            "только после аутентификации (команда: /auth login passowrd)\n" +
-                            "или после регистрации (команда: /register login password username)");
+                                "только после аутентификации (команда: /auth login passowrd)\n" +
+                                "или после регистрации (команда: /register login password username)");
                 }
                 // завершение аутентификации и регистрации
                 while (true) {
@@ -57,61 +58,49 @@ public class ClientHandler {
                         if (msg.startsWith("/exit")) {
                             exit();
                             break;
-                        }
-                        else if (msg.startsWith("/w ")) {
+                        } else if (msg.startsWith("/w ")) {
                             personalMsg(msg);
-                        }
-
-                        else if (msg.startsWith("/activelist")) {
+                        } else if (msg.startsWith("/activelist")) {
                             server.sendList(this);
-                        }
-                        else if (msg.startsWith("/kick ")) {
+                        } else if (msg.startsWith("/kick ")) {
                             kickUser(msg);
-                        }
-                        else if (msg.startsWith("/changenick")) {
+                        } else if (msg.startsWith("/changenick")) {
                             String oldName = getName();
                             if (changeNick(msg)) {
                                 server.changeNick(this, oldName);
                                 String infoMsg = "Клиент " + oldName + " изменил username на " + getName();
-                                System.out.println(infoMsg);
+                                logger.info(infoMsg);
                                 sendMessage(infoMsg);
                                 continue;
                             }
                             String infoMsg = "Не удалось изменить имя клиента " + oldName;
-                            System.out.println(infoMsg);
-                        }
-                        else if (msg.startsWith("/department")){
-                            if (createDepartment(msg)){
+                            logger.info(infoMsg);
+                        } else if (msg.startsWith("/department")) {
+                            if (createDepartment(msg)) {
                                 String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
-                                System.out.println(resultAddDepartment);
+                                logger.info(resultAddDepartment);
                                 sendMessage(resultAddDepartment);
 
                             }
-                        }
-                        else if(msg.startsWith("/listdepartments")){
+                        } else if (msg.startsWith("/listdepartments")) {
                             getDepartments();
-                        }
-                        else if (msg.startsWith("/shutdown")) {
+                        } else if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
                                 server.shutdown();
                                 disconnect();
                                 System.exit(0);
                             }
                         } else if (msg.startsWith("/group ")) {
-                            if (createGroup(msg)){
+                            if (createGroup(msg)) {
                                 String resultAddGroup = "Группа " + msg.trim().split("\\s+")[1] + " создана";
-                                System.out.println(resultAddGroup);
+                                logger.info(resultAddGroup);
                                 sendMessage(resultAddGroup);
                             }
                         } else if (msg.startsWith("/enter ")) {
                             enterGroup(msg);
                         } else if (msg.startsWith("/addgroup ")) {
                             requestAddGroup(msg);
-                        } else if (msg.startsWith("/addgroup ")) {
-                            requestAddGroup(msg);
-                        }
-
-                        else {
+                        } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
                     } else {
@@ -121,9 +110,9 @@ public class ClientHandler {
                 disconnect();
             } catch (IOException e) {
                 if (name == null) {
-                    System.out.println("Не аутентифицированный клиент отключился");
+                    logger.info("Не аутентифицированный клиент отключился");
                 } else {
-                    System.out.println(name + " отключился");
+                    logger.info("{} отключился", name);
                 }
             } finally {
                 disconnect();
@@ -137,7 +126,7 @@ public class ClientHandler {
     private void enterGroup(String msg) {
         // /enter groupTitle password_group
         String[] array = msg.trim().split("\\s+");
-        if (array.length != 3){
+        if (array.length != 3) {
             sendMessage("Некорректный формат ввода команды /enter");
         } else {
             server.getAuthenticatedProvider().enterGroup(this, array[1], array[2]);
@@ -151,7 +140,7 @@ public class ClientHandler {
     private boolean createGroup(String msg) {
 //        /group <title> <password>
         String[] array = msg.trim().split("\\s+");
-        if (array.length != 3){
+        if (array.length != 3) {
             sendMessage("Некорректный формат ввода команды /group");
             return false;
         }
@@ -164,7 +153,7 @@ public class ClientHandler {
         for (Department department : departments) {
             msgDepartments.append(department.getTitle()).append(" ");
         }
-        if (msgDepartments.toString().equals("departments: ")){
+        if (msgDepartments.toString().equals("departments: ")) {
             msgDepartments.append("empty");
         }
         sendMessage(msgDepartments.toString());
@@ -172,11 +161,11 @@ public class ClientHandler {
 
     private boolean createDepartment(String msg) {
         String[] array = msg.trim().split("\\s+");
-        if (array.length != 3){
+        if (array.length != 3) {
             sendMessage("Некорректный формат ввода команды /department");
             return false;
         }
-        if(!server.getAuthenticatedProvider().isAdmin(this)){
+        if (!server.getAuthenticatedProvider().isAdmin(this)) {
             sendMessage("Вы не являетесь администратором");
             return false;
         }
@@ -243,7 +232,7 @@ public class ClientHandler {
     protected void exit() {
         sendMessage("/exitok");
         if (name != null) {
-            System.out.println("Клиенту " + name + " отравлено сообщение о закрытии");
+            logger.info("Клиенту {} отравлено сообщение о закрытии", name);
         }
     }
 

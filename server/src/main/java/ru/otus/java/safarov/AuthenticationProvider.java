@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static ru.otus.java.safarov.ServerApplication.logger;
+
 public class AuthenticationProvider implements AuthenticatedProvider {
 
     private final Server server;
@@ -33,10 +35,10 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     public void initialize() {
         try {
             clientDAO = new ClientDAO();
-            System.out.println("Сервис аутентификации запущен. DB режим");
+            logger.info("Сервис аутентификации запущен. DB режим");
             inMemory = false;
         } catch (SQLException e) {
-            System.out.println("Сервис аутентификации запущен. In memory режим");
+            logger.info("Сервис аутентификации запущен. In memory режим");
         }
     }
 
@@ -66,7 +68,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         clientHandler.setName(authName);
         server.subscribe(clientHandler);
         if (!clientDAO.updateDateVisit(authName)){
-            System.out.println("date don't added");
+            logger.info("date don't added");
         }
         clientHandler.sendMessage("/authok " + authName);
         return true;
@@ -95,14 +97,14 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         if (!inMemory && clientDAO.addUser(clientDAO.getAll().size()+1,new User(login, password, username)) == -1){
             String msgError = username + " не зарегистрирован.";
-            System.out.println(msgError);
+            logger.info(msgError);
             clientHandler.sendMessage(msgError);
             return false;
         }
         clientHandler.setName(username);
         server.subscribe(clientHandler);
         if(!clientDAO.addDateVisit(username)){
-            System.out.println("date don't created");
+            logger.info("date don't created");
         }
         clientHandler.sendMessage("/regok " + username);
         return true;
@@ -182,7 +184,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         if (clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1){
             String msgError = title + " не создан.";
-            System.out.println(msgError);
+            logger.info(msgError);
             clientHandler.sendMessage(msgError);
             return false;
         }
@@ -227,7 +229,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         if (clientDAO.addGroup(title, password, clientHandler.getName()) == -1){
             String msgError = title + " не создан.";
-            System.out.println(msgError);
+            logger.info(msgError);
             clientHandler.sendMessage(msgError);
             return false;
         }

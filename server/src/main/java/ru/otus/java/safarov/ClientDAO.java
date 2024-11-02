@@ -46,7 +46,6 @@ public class ClientDAO implements ClientService {
             try (ResultSet resultSet = pst.executeQuery()) {
                 while (resultSet.next()) {
                     username = resultSet.getString("username");
-                    System.out.println(username);
                 }
             }
         } catch (SQLException e) {
