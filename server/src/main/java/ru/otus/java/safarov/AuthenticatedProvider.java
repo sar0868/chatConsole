@@ -1,5 +1,6 @@
 package ru.otus.java.safarov;
 
+import java.util.List;
 import java.util.Set;
 
 public interface AuthenticatedProvider {
@@ -20,7 +21,7 @@ public interface AuthenticatedProvider {
 
     boolean addGroup(ClientHandler clientHandler, String title, String password);
 
-    String getGroupTitle(ClientHandler clientHandler);
+    List<String> getGroupTitle(ClientHandler clientHandler);
 
     void enterGroup(ClientHandler clientHandler, String groupTitle, String password);
 }

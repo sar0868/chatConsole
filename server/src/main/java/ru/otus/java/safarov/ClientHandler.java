@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static ru.otus.java.safarov.ServerApplication.logger;
@@ -22,6 +24,7 @@ public class ClientHandler {
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
+        this.groupTitle = "";
         new Thread(() -> {
             try {
                 // цикл аутентификации и регистрации
@@ -87,6 +90,7 @@ public class ClientHandler {
                         } else if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
                                 server.shutdown();
+
                                 disconnect();
                                 System.exit(0);
                             }
@@ -98,8 +102,12 @@ public class ClientHandler {
                             }
                         } else if (msg.startsWith("/enter ")) {
                             enterGroup(msg);
+                        } else if (msg.startsWith("/groupslist")){
+                            getTitlesGroups();
                         } else if (msg.startsWith("/addgroup ")) {
                             requestAddGroup(msg);
+                        } else if (msg.startsWith("/exitgroup")) {
+                            exitGroup();
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -120,6 +128,16 @@ public class ClientHandler {
         }).start();
     }
 
+    private void exitGroup() {
+        if (groupTitle.isEmpty()){
+            sendMessage("Вы не входили ни в одну из групп");
+        }  else {
+            String yuoGroup = groupTitle;
+            groupTitle = "";
+            sendMessage("Вы вышли из группы " + yuoGroup);
+        }
+    }
+
     private void requestAddGroup(String msg) {
     }
 
@@ -129,12 +147,23 @@ public class ClientHandler {
         if (array.length != 3) {
             sendMessage("Некорректный формат ввода команды /enter");
         } else {
-            server.getAuthenticatedProvider().enterGroup(this, array[1], array[2]);
+            if (groupTitle.isEmpty()) {
+                server.getAuthenticatedProvider().enterGroup(this, array[1], array[2]);
+                getGroup(array[1]);
+            } else {
+                sendMessage("Для создания группы необходимо выйти из группы " + groupTitle + " командой /exitgroup");
+            }
         }
     }
 
-    private void getGroup() {
-        groupTitle = server.getAuthenticatedProvider().getGroupTitle(this);
+    private void getGroup(String titleGroup) {
+        groupTitle = titleGroup;
+    }
+
+    private void getTitlesGroups() {
+        List<String> titles = server.getAuthenticatedProvider().getGroupTitle(this);
+        String titlesGroups = Collections.singletonList(titles).toString();
+        sendMessage("list groups: " + titlesGroups);
     }
 
     private boolean createGroup(String msg) {

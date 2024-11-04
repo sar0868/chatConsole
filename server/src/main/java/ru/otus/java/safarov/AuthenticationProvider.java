@@ -13,7 +13,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     private final Server server;
     private final List<User> users;
     private final Set<Department> departments;
-    private final Set<Group> groups;
+    private final List<Group> groups;
     private ClientDAO clientDAO;
     private boolean inMemory;
 
@@ -21,7 +21,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         this.server = server;
         this.users = new ArrayList<>();
         this.departments = new HashSet<>();
-        this.groups = new HashSet<>();
+        this.groups = new ArrayList<>();
         inMemory = true;
         this.users.add(new User("qwe", "qwe", "qwe1"));
         this.users.add(new User("asd", "asd", "asd1"));
@@ -103,9 +103,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(username);
         server.subscribe(clientHandler);
-        if(!clientDAO.addDateVisit(username)){
-            logger.info("date don't created");
-        }
+        updateDateVisit(username);
         clientHandler.sendMessage("/regok " + username);
         return true;
     }
@@ -120,6 +118,10 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             return false;
         }
         return clientDAO.isUserName(username);
+    }
+
+    private void updateDateVisit(String username){
+        clientDAO.addDateVisit(username);
     }
 
     private boolean isLoginAlreadyExist(String login) {
@@ -266,16 +268,17 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public String getGroupTitle(ClientHandler clientHandler) {
+    public List<String> getGroupTitle(ClientHandler clientHandler) {
+        List<String> titleGroups = new ArrayList<>();
         if(inMemory){
-            return "";
+            for (Group group : groups) {
+                titleGroups.add(group.getTitle());
+            }
+        } else {
+            titleGroups = clientDAO.getGroupTitle(clientHandler.getName());
+
         }
-        List<String> titleGroups = clientDAO.getGroupTitle(clientHandler.getName());
-//        if (titleGroups != null && titleGroups.contains(clientHandler......)){
-//
-//            return "";
-//        }
-        return "";
+        return titleGroups;
     }
 
     @Override
