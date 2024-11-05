@@ -24,4 +24,7 @@ public interface AuthenticatedProvider {
     List<String> getGroupTitle(ClientHandler clientHandler);
 
     void enterGroup(ClientHandler clientHandler, String groupTitle, String password);
+
+    boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle);
+
 }

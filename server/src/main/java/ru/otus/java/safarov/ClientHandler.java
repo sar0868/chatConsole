@@ -139,7 +139,16 @@ public class ClientHandler {
     }
 
     private void requestAddGroup(String msg) {
-    }
+        // /addgroup <имя группы>
+        String[] array = msg.trim().split(("\\s+"));
+        if (array.length != 2){
+            sendMessage("Некорректный формат ввода команды /addgroup");
+        } else {
+            if(!server.getAuthenticatedProvider().addRequestAddGroup(this, array[1])){
+                logger.info("Запрос на добавление группы {} не создан", array[1]);
+            }
+        }
+     }
 
     private void enterGroup(String msg) {
         // /enter groupTitle password_group

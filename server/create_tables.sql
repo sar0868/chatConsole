@@ -173,9 +173,13 @@ select now();
 insert into date_visit(datevisit, id , userid) values((select now()), 3, 6);
 select * from date_visit dv;
 
-drop table date_visit;
+drop t
 
+select * from users_to_groups utg ;
+select count(userid) from users_to_groups utg 
+where utg.userid = 2 and groupid = 3;
 
+select id from "groups" g where title = 'gr2';
 
 
 

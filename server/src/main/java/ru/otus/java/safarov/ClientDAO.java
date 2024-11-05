@@ -409,6 +409,41 @@ public class ClientDAO implements ClientService {
         return result == 1;
     }
 
+    @Override
+    public boolean isMemberGroup(String username, String groupTitle) {
+        String stmt = "select count(userid) from users_to_groups where userid = ? and groupid = ?";
+        int userid = getUserID(username);
+        int groupid = getGroupID(groupTitle);
+        int result = -1;
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setInt(1, userid);
+            pst.setInt(2, groupid);
+            try(ResultSet resultSet = pst.getResultSet()){
+                while (resultSet.next()){
+                    result = resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result != 0;
+    }
+
+    private int getGroupID(String groupTitle) {
+        int groupid = 0;
+        String stmt = "select id from groups where title = ?";
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, groupTitle);
+            try(ResultSet resultSet = pst.getResultSet()){
+                while (resultSet.next()){
+                    groupid = resultSet.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return groupid;
+    }
 
     @Override
     public void close() throws Exception {

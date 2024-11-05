@@ -297,4 +297,26 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 //        clientHandler.sendMessage("/authok " + authName);
 //        return true;
     }
+
+    @Override
+    public boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle) {
+        // есть ли такая группа, не является ли пользователь уже членом группы, есть ли уже запрос на добавление
+        // создать запрос
+        if (!isGroupAlreadyExist(groupTitle)){
+            clientHandler.sendMessage("Группы " + groupTitle + " не существует");
+            return false;
+        }
+        if (isMemberGroup(clientHandler.getName(), groupTitle)){
+            clientHandler.sendMessage("Вы уже являетесь членом группы " + groupTitle +
+                    ".\nДля входа в группу введите //enter " + groupTitle);
+            return false;
+        }
+        return false;
+    }
+
+
+    private boolean isMemberGroup(String username, String groupTitle) {
+        clientDAO.isMemberGroup(username, groupTitle);
+        return false;
+    }
 }
