@@ -317,7 +317,7 @@ public class ClientDAO implements ClientService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        String INSERT_DEPARTMENT = "insert into groups(id, title, adminid, password) values(?, ?, ?, ?);";
+        String INSERT_DEPARTMENT = "insert into groups(id, title, adminid, password) values(?, ?, ?, ?)";
         try (PreparedStatement pst = connection.prepareStatement(INSERT_DEPARTMENT)) {
             pst.setInt(1, groupID);
             pst.setString(2, title);
@@ -407,14 +407,13 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public boolean isMemberGroup(String username, String groupTitle) {
+    public boolean isMemberGroup(String username, int groupID) {
         String stmt = "select count(userid) from users_to_groups where userid = ? and groupid = ?";
         int userid = getUserID(username);
-        int groupid = getGroupID(groupTitle);
-        int result = -1;
+        int result = 0;
         try (PreparedStatement pst = connection.prepareStatement(stmt)){
             pst.setInt(1, userid);
-            pst.setInt(2, groupid);
+            pst.setInt(2, groupID);
             try(ResultSet resultSet = pst.executeQuery()){
                 while (resultSet.next()){
                     result = resultSet.getInt(1);
@@ -443,16 +442,15 @@ public class ClientDAO implements ClientService {
 //    }
 
     @Override
-    public boolean addRequestAddGroup(String username, String groupTitle) {
+    public boolean addRequestAddGroup(String username, int groupID) {
         String stmt = "insert into request_add_group (id, userid, groupid, daterequest) values(?, ?, ?, (select now()))";
         int requestID = getMaxID("request_add_group");
         int userid = getUserID(username);
-        int groupid = getGroupID(groupTitle);
         int result = -1;
         try (PreparedStatement pst = connection.prepareStatement(stmt)){
             pst.setInt(1, requestID);
             pst.setInt(2, userid);
-            pst.setInt(3, groupid);
+            pst.setInt(3, groupID);
             result = pst.executeUpdate();
 
         } catch (SQLException e) {

@@ -41,9 +41,9 @@ public interface ClientService extends AutoCloseable{
 
     boolean addDateVisit(String username);
 
-    boolean isMemberGroup(String username, String groupTitle);
+    boolean isMemberGroup(String username, int groupID);
 
-    boolean addRequestAddGroup(String username, String groupTitle);
+    boolean addRequestAddGroup(String username, int groupID);
 
 //    int getMaxGroupID();
 }

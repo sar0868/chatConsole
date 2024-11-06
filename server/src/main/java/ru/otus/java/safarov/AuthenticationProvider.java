@@ -214,7 +214,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
                     длина пароля 6 и более символов""");
             return false;
         }
-        if (isGroupAlreadyExist(title) == -1){
+        if (isGroupAlreadyExist(title) != -1){
             clientHandler.sendMessage("Указанная группа уже существует.");
             return false;
         }
@@ -307,16 +307,23 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             clientHandler.sendMessage("Группы " + groupTitle + " не существует");
             return false;
         }
-        if (isMemberGroup(clientHandler.getName(), groupTitle)){
+        if (isMemberGroup(clientHandler.getName(), groupID)){
             clientHandler.sendMessage("Вы уже являетесь членом группы " + groupTitle +
-                    ".\nДля входа в группу введите //enter " + groupTitle);
+                    ".\nДля входа в группу введите /enter " + groupTitle);
             return false;
         }
-        return clientDAO.addRequestAddGroup(clientHandler.getName(), groupTitle);
+//        if (isExistRequest(clientHandler.getName(), groupID)){
+//
+//        }
+        return clientDAO.addRequestAddGroup(clientHandler.getName(), groupID);
     }
 
+//    private boolean isExistRequest(String username, int groupID) {
+//        return clientDAO.isExistRe
+//    }
 
-    private boolean isMemberGroup(String username, String groupTitle) {
-        return clientDAO.isMemberGroup(username, groupTitle);
+
+    private boolean isMemberGroup(String username, int groupID) {
+        return clientDAO.isMemberGroup(username, groupID);
     }
 }

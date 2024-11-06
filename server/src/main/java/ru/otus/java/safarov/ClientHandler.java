@@ -105,6 +105,8 @@ public class ClientHandler {
                             getTitlesGroups();
                         } else if (msg.startsWith("/addgroup ")) {
                             requestAddGroup(msg);
+                            //клиент получает "Ваш запрос на добавление в группу group1 создан" (клиент уже входит в
+                            //эту группу при этом не нужно получать такое сообщение
                         } else if (msg.startsWith("/leavegroup")) {
                             leaveGroup();
                         } else {
