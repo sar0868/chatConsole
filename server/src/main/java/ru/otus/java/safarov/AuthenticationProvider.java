@@ -214,7 +214,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
                     длина пароля 6 и более символов""");
             return false;
         }
-        if (isGroupAlreadyExist(title)){
+        if (isGroupAlreadyExist(title) == -1){
             clientHandler.sendMessage("Указанная группа уже существует.");
             return false;
         }
@@ -250,16 +250,16 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return id+1;
     }
 
-    private boolean isGroupAlreadyExist(String title) {
+    private int isGroupAlreadyExist(String title) {
         if (inMemory){
             for (Group group : groups) {
                 if (group.getTitle().equals(title)){
-                    return true;
+                    return 1;
                 }
             }
-            return false;
+            return -1;
         }
-        return clientDAO.isGroup(title);
+        return clientDAO.getGroupID(title);
     }
 
     @Override
@@ -275,7 +275,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
                 titleGroups.add(group.getTitle());
             }
         } else {
-            titleGroups = clientDAO.getGroupTitle(clientHandler.getName());
+            titleGroups = clientDAO.getGroupTitle();
 
         }
         return titleGroups;
@@ -301,8 +301,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     @Override
     public boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle) {
         // есть ли такая группа, не является ли пользователь уже членом группы, есть ли уже запрос на добавление
-        // создать запрос
-        if (!isGroupAlreadyExist(groupTitle)){
+        // создать запрос (сделать все одним запросом или собирать данные)
+        int groupID = isGroupAlreadyExist(groupTitle);
+        if (groupID == -1){
             clientHandler.sendMessage("Группы " + groupTitle + " не существует");
             return false;
         }
@@ -311,12 +312,11 @@ public class AuthenticationProvider implements AuthenticatedProvider {
                     ".\nДля входа в группу введите //enter " + groupTitle);
             return false;
         }
-        return false;
+        return clientDAO.addRequestAddGroup(clientHandler.getName(), groupTitle);
     }
 
 
     private boolean isMemberGroup(String username, String groupTitle) {
-        clientDAO.isMemberGroup(username, groupTitle);
-        return false;
+        return clientDAO.isMemberGroup(username, groupTitle);
     }
 }

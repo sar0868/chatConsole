@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -106,8 +105,8 @@ public class ClientHandler {
                             getTitlesGroups();
                         } else if (msg.startsWith("/addgroup ")) {
                             requestAddGroup(msg);
-                        } else if (msg.startsWith("/exitgroup")) {
-                            exitGroup();
+                        } else if (msg.startsWith("/leavegroup")) {
+                            leaveGroup();
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -128,7 +127,7 @@ public class ClientHandler {
         }).start();
     }
 
-    private void exitGroup() {
+    private void leaveGroup() {
         if (groupTitle.isEmpty()){
             sendMessage("Вы не входили ни в одну из групп");
         }  else {
@@ -147,6 +146,7 @@ public class ClientHandler {
             if(!server.getAuthenticatedProvider().addRequestAddGroup(this, array[1])){
                 logger.info("Запрос на добавление группы {} не создан", array[1]);
             }
+            sendMessage("Ваш запрос на добавление в группу " + array[1] + " создан");
         }
      }
 
@@ -160,7 +160,7 @@ public class ClientHandler {
                 server.getAuthenticatedProvider().enterGroup(this, array[1], array[2]);
                 getGroup(array[1]);
             } else {
-                sendMessage("Для создания группы необходимо выйти из группы " + groupTitle + " командой /exitgroup");
+                sendMessage("Для создания группы необходимо выйти из группы " + groupTitle + " командой /leavegroup");
             }
         }
     }
@@ -171,8 +171,7 @@ public class ClientHandler {
 
     private void getTitlesGroups() {
         List<String> titles = server.getAuthenticatedProvider().getGroupTitle(this);
-        String titlesGroups = Collections.singletonList(titles).toString();
-        sendMessage("list groups: " + titlesGroups);
+        sendMessage("list groups: " + titles);
     }
 
     private boolean createGroup(String msg) {

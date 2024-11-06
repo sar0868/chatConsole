@@ -291,7 +291,7 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public boolean isGroup(String title) {
+    public int getGroupID(String title) {
         int id = -1;
         String isTitle = "select id from groups where title = ?";
         try (PreparedStatement pst = connection.prepareStatement(isTitle)) {
@@ -304,7 +304,7 @@ public class ClientDAO implements ClientService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return id != -1;
+        return id;
     }
 
     @Override
@@ -360,17 +360,14 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public List<String> getGroupTitle(String username) {
+    public List<String> getGroupTitle() {
         List<String> titleGroups = new ArrayList<>();
-        String GET_GROUP_TITLE = "select title from groups gr" +
-                "inner join users_to_groups utg on gr.id = utg.groupid " +
-                "inner join users u on utg.userid = u.id " +
-                "where username = ?";
-        try(PreparedStatement pst = connection.prepareStatement(GET_GROUP_TITLE)){
-            pst.setString(1, username);
-            try(ResultSet resultSet = pst.executeQuery()){
-                while (resultSet.next()){
-                    titleGroups.add(resultSet.getString("title"));
+        String GET_GROUP_TITLE = "select title from groups";
+        try(Statement statement = connection.createStatement()){
+            try(ResultSet resultSet = statement.executeQuery(GET_GROUP_TITLE)){
+                while (resultSet.next()) {
+                    String title = resultSet.getString("title");
+                    titleGroups.add(title);
                 }
             }
         } catch (SQLException e) {
@@ -418,7 +415,7 @@ public class ClientDAO implements ClientService {
         try (PreparedStatement pst = connection.prepareStatement(stmt)){
             pst.setInt(1, userid);
             pst.setInt(2, groupid);
-            try(ResultSet resultSet = pst.getResultSet()){
+            try(ResultSet resultSet = pst.executeQuery()){
                 while (resultSet.next()){
                     result = resultSet.getInt(1);
                 }
@@ -429,20 +426,39 @@ public class ClientDAO implements ClientService {
         return result != 0;
     }
 
-    private int getGroupID(String groupTitle) {
-        int groupid = 0;
-        String stmt = "select id from groups where title = ?";
+//    private int getGroupID(String groupTitle) {
+//        int groupid = 0;
+//        String stmt = "select id from groups where title = ?";
+//        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+//            pst.setString(1, groupTitle);
+//            try(ResultSet resultSet = pst.executeQuery()){
+//                while (resultSet.next()){
+//                    groupid = resultSet.getInt("id");
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return groupid;
+//    }
+
+    @Override
+    public boolean addRequestAddGroup(String username, String groupTitle) {
+        String stmt = "insert into request_add_group (id, userid, groupid, daterequest) values(?, ?, ?, (select now()))";
+        int requestID = getMaxID("request_add_group");
+        int userid = getUserID(username);
+        int groupid = getGroupID(groupTitle);
+        int result = -1;
         try (PreparedStatement pst = connection.prepareStatement(stmt)){
-            pst.setString(1, groupTitle);
-            try(ResultSet resultSet = pst.getResultSet()){
-                while (resultSet.next()){
-                    groupid = resultSet.getInt("id");
-                }
-            }
+            pst.setInt(1, requestID);
+            pst.setInt(2, userid);
+            pst.setInt(3, groupid);
+            result = pst.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return groupid;
+        return result != -1;
     }
 
     @Override

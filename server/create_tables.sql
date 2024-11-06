@@ -182,7 +182,8 @@ where utg.userid = 2 and groupid = 3;
 select id from "groups" g where title = 'gr2';
 
 
-
+select * from request_add_group rag ;
+insert into request_add_group (id, userid, groupid, daterequest) values(2, 2, 2, (select now()));
 
 
 

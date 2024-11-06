@@ -29,19 +29,21 @@ public interface ClientService extends AutoCloseable{
 
     Set<Department> getDepartments();
 
-    boolean isGroup(String title);
+    int getGroupID(String title);
 
     int addGroup(String title, String password, String username);
 
     int insertUsersToGroups(int userId, int groupID);
 
-    List<String> getGroupTitle(String username);
+    List<String> getGroupTitle();
 
     boolean updateDateVisit(String authName);
 
     boolean addDateVisit(String username);
 
     boolean isMemberGroup(String username, String groupTitle);
+
+    boolean addRequestAddGroup(String username, String groupTitle);
 
 //    int getMaxGroupID();
 }
