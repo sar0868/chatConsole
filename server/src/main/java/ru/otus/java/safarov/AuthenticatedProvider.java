@@ -27,4 +27,7 @@ public interface AuthenticatedProvider {
 
     boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle);
 
+    boolean isManagerGroup(ClientHandler clientHandler);
+
+    List<String> getListRequest(ClientHandler clientHandler, String groupTitle);
 }

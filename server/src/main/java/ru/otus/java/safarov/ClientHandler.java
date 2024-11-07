@@ -4,9 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static ru.otus.java.safarov.ServerApplication.logger;
 
@@ -17,12 +15,14 @@ public class ClientHandler {
     private final DataOutputStream out;
     private String name;
     private String groupTitle;
+    private Map<String, List<String>> requestsAddGroups;
 
     public ClientHandler(Server server, Socket socket) throws IOException {
         this.server = server;
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
+        requestsAddGroups = new HashMap<>();
         this.groupTitle = "";
         new Thread(() -> {
             try {
@@ -111,6 +111,8 @@ public class ClientHandler {
                             //эту группу при этом не нужно получать такое сообщение
                         } else if (msg.startsWith("/leavegroup")) {
                             leaveGroup();
+                        } else if (msg.startsWith("/review")) {
+                            acceptReview(msg);
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -129,6 +131,11 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private void acceptReview(String msg) {
+        //разобрать строку и добавить в группу и удалить из request все записи по этой группе
+
     }
 
     private void leaveGroup() {
@@ -163,15 +170,16 @@ public class ClientHandler {
         } else {
             if (groupTitle.isEmpty()) {
                 if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
-                    getGroup(array[1]);
+                    setGroup(array[1]);
                     sendMessage("Вы вошли в группу " + groupTitle);
                 }
             } else if (groupTitle.equals(array[1])) {
                 sendMessage("Вы уже находитесь в группе " + groupTitle);
             } else if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
                 leaveGroup();
-                getGroup(array[1]);
+                setGroup(array[1]);
                 sendMessage("Вы вошли в группу " + groupTitle);
+                reviewrequest();
             } else {
                 logger.info("Пользователю {} не удалось сменить группу на {}", getName(), array[1]);
                 sendMessage("Не удалось сменить группу на " + array[1]);
@@ -179,8 +187,24 @@ public class ClientHandler {
         }
     }
 
-    private void getGroup(String titleGroup) {
+    private void reviewrequest() {
+        //отправить клиенту список имен
+        // /review <username1 username2 ...> клиент указывает кого добавить
+        // остальные удаляются из запроса, если нет имен, то удаляются все.
+
+        if(server.getAuthenticatedProvider().isManagerGroup(this)){
+            List<String> usersSentRequest= server.getAuthenticatedProvider().getListRequest(this, groupTitle);
+            requestsAddGroups.put(groupTitle, usersSentRequest);
+            sendMessage("/review " + usersSentRequest);
+        }
+    }
+
+    private void setGroup(String titleGroup) {
         groupTitle = titleGroup;
+    }
+
+    public String getGroupTitle() {
+        return groupTitle;
     }
 
     private void getTitlesGroups() {

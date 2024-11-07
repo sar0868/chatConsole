@@ -299,18 +299,10 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return true;
     }
 
-//    private int isExistGroupAndMember(ClientHandler clientHandler, String groupTitle){
-//        int groupID = isGroupAlreadyExist(groupTitle);
-//        if (groupID == -1){
-//            clientHandler.sendMessage("Группы " + groupTitle + " не существует");
-//            return groupID;
-//        }
-//        if (isMemberGroup(clientHandler.getName(), groupID)){
-//            clientHandler.sendMessage("Вы уже являетесь членом группы " + groupTitle +
-//                    ".\nДля входа в группу введите /enter " + groupTitle);
-//        }
-//        return groupID;
-//    }
+    @Override
+    public boolean isManagerGroup(ClientHandler clientHandler) {
+        return clientHandler.getName().equals(clientDAO.getUsernameManagerGroup(clientHandler.getGroupTitle()));
+    }
 
     @Override
     public boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle) {
@@ -332,6 +324,11 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             return false;
         }
         return clientDAO.addRequestAddGroup(clientHandler.getName(), groupID);
+    }
+
+    @Override
+    public List<String> getListRequest(ClientHandler clientHandler, String groupTitle) {
+        return clientDAO.getUsernameSentRequest(groupTitle, clientHandler.getName());
     }
 
     private boolean isExistRequest(String username, int groupID) {

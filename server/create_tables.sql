@@ -39,7 +39,6 @@ create table Groups(
     id serial primary key,
     title varchar(100) unique,
     adminID smallint not null,
-    password varchar(100) not null,
     foreign key (adminID) references Users(id)
 );
 
@@ -191,7 +190,24 @@ select rag.id from request_add_group rag
 inner join users u on rag.userid = u.id
 where username = 'qwe1' and groupid = 2;
 
+insert into date_visit (id, userid, datevisit) values(2, 3, (select now())), (3, 2, (select now()));
 
+select username from groups g 
+inner join users u on g.adminid = u.id 
+where title = 'gr1';
+
+select rag.id, u.username from request_add_group rag
+inner join users u on rag.userid = u.id 
+inner join groups g on rag.groupid  = g.id 
+where title = 'gr1' 
+and daterequest > (
+select datevisit from date_visit dv 
+inner join users u2 on dv.userid = u2.id
+where u2.username = 'admin'
+);
+
+
+-- min day
 
 
 

@@ -464,11 +464,11 @@ public class ClientDAO implements ClientService {
                 "inner join users u on rag.userid = u.id " +
                 "where username = ? and rag.groupid = ?";
         int result = -1;
-        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setString(1, username);
             pst.setInt(2, groupID);
-            try(ResultSet resultSet = pst.executeQuery()){
-                while (resultSet.next()){
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
                     result = resultSet.getInt(1);
                 }
             }
@@ -476,6 +476,48 @@ public class ClientDAO implements ClientService {
             throw new RuntimeException(e);
         }
         return result != -1;
+    }
+
+    @Override
+    public String getUsernameManagerGroup(String groupTitle) {
+        String stmt = "select username from groups g inner join users u on g.adminid = u.id where title = ?";
+        String username = "";
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
+            pst.setString(1, groupTitle);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
+                    username = resultSet.getString("username");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return username;
+    }
+
+    @Override
+    public List<String> getUsernameSentRequest(String groupTitle, String username) {
+        String stmt = "select username from request_add_group rag " +
+                "inner join users u on rag.userid = u.id " +
+                "inner join groups g on rag.groupid  = g.id " +
+                " where title = ? " +
+                "and daterequest > (select datevisit from date_visit dv " +
+                "inner join users u2 on dv.userid = u2.id " +
+                "where u2.username = ?)";
+        List<String> requestList = new ArrayList<>();
+        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, groupTitle);
+            pst.setString(2, username);
+            try(ResultSet resultSet = pst.executeQuery()){
+                while (resultSet.next()){
+                    String name = resultSet.getString(2);
+                    requestList.add(name);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return requestList;
     }
 
     @Override
