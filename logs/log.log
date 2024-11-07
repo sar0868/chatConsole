@@ -19,3 +19,57 @@ INFO  2024-11-06 18:55:30 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientH
 INFO  2024-11-06 18:56:49 [Thread-1] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
 INFO  2024-11-06 18:56:49 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd1 прошел аутентификацию.
 INFO  2024-11-06 18:57:02 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:147) - Запрос на добавление группы group1 не создан
+INFO  2024-11-07 11:00:43 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:00:43 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:01:02 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:01:02 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd2 прошел аутентификацию.
+INFO  2024-11-07 11:02:50 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:149) - Запрос на добавление группы gr1 не создан
+INFO  2024-11-07 11:03:20 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:03:20 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:03:30 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:03:30 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd2 прошел аутентификацию.
+INFO  2024-11-07 11:03:42 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:149) - Запрос на добавление группы gr1 не создан
+INFO  2024-11-07 11:05:58 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:149) - Запрос на добавление группы gr2 не создан
+INFO  2024-11-07 11:06:17 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:275) - Клиенту asd2 отравлено сообщение о закрытии
+INFO  2024-11-07 11:06:48 [Thread-1] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:06:48 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:06:56 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:149) - Запрос на добавление группы gr1 не создан
+INFO  2024-11-07 11:08:00 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:08:00 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:08:10 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:08:10 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:09:36 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:09:36 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:09:45 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:09:45 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:11:38 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:11:38 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:11:51 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:11:51 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:24:38 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:24:38 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:28:18 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:28:18 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:28:27 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:28:27 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:31:16 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:31:16 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:31:24 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:31:24 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:32:44 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:32:44 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:32:53 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:32:53 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:34:03 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:34:03 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:34:25 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:34:25 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:34:33 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:34:33 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:35:04 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:149) - Запрос на добавление группы gr2 не создан
+INFO  2024-11-07 11:35:14 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:275) - Клиенту qwe1 отравлено сообщение о закрытии
+INFO  2024-11-07 11:35:50 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 11:35:50 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 11:35:57 [Thread-0] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:71) - date don't added
+INFO  2024-11-07 11:35:57 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 11:37:01 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:275) - Клиенту qwe1 отравлено сообщение о закрытии

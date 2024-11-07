@@ -103,7 +103,7 @@ public class ClientHandler {
                             enterGroup(msg);
                         } else if (msg.startsWith("/groupslist")){
                             getTitlesGroups();
-                        } else if (msg.startsWith("/addgroup ")) {
+                        } else if (msg.startsWith("/requestaddgroup ")) {
                             requestAddGroup(msg);
                             //клиент получает "Ваш запрос на добавление в группу group1 создан" (клиент уже входит в
                             //эту группу при этом не нужно получать такое сообщение
@@ -147,8 +147,9 @@ public class ClientHandler {
         } else {
             if(!server.getAuthenticatedProvider().addRequestAddGroup(this, array[1])){
                 logger.info("Запрос на добавление группы {} не создан", array[1]);
+            } else {
+                sendMessage("Ваш запрос на добавление в группу " + array[1] + " создан");
             }
-            sendMessage("Ваш запрос на добавление в группу " + array[1] + " создан");
         }
      }
 

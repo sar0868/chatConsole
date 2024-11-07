@@ -187,7 +187,9 @@ insert into request_add_group (id, userid, groupid, daterequest) values(2, 2, 2,
 
 select id from groups where title = ('gr1');
 
-
+select rag.id from request_add_group rag 
+inner join users u on rag.userid = u.id
+where username = 'qwe1' and groupid = 2;
 
 
 

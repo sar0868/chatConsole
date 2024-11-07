@@ -312,15 +312,17 @@ public class AuthenticationProvider implements AuthenticatedProvider {
                     ".\nДля входа в группу введите /enter " + groupTitle);
             return false;
         }
-//        if (isExistRequest(clientHandler.getName(), groupID)){
-//
-//        }
+        if (isExistRequest(clientHandler.getName(), groupID)){
+            clientHandler.sendMessage("Вы уже направляли запрос на добавление в группу " + groupTitle +
+                    ". Ваш запрос еще не рассмотрен.");
+            return false;
+        }
         return clientDAO.addRequestAddGroup(clientHandler.getName(), groupID);
     }
 
-//    private boolean isExistRequest(String username, int groupID) {
-//        return clientDAO.isExistRe
-//    }
+    private boolean isExistRequest(String username, int groupID) {
+        return clientDAO.isExistRequestAddGroup(username, groupID);
+    }
 
 
     private boolean isMemberGroup(String username, int groupID) {
