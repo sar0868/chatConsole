@@ -328,7 +328,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public List<String> getListRequest(ClientHandler clientHandler, String groupTitle) {
-        return clientDAO.getUsernameSentRequest(groupTitle, clientHandler.getName());
+        return clientDAO.getUsernameSentRequest(groupTitle);
     }
 
     private boolean isExistRequest(String username, int groupID) {

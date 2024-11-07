@@ -1,92 +1,24 @@
-create table Users(
-    id serial PRIMARY KEY,
-    login varchar(100) not null,
-    username varchar(100) not null,
-    password varchar(100) not null
-);
+insert into users (id, login, password, username) values(1, 'admin', 'admin', 'admin'),
+(2, 'qwe', 'qwe', 'qwe1'), (3,'asd','asd', 'asd1');
 
+insert into users (id, login, password, username) values(4, 'user', 'password', 'user1');
 
-create table Roles(
-	id serial primary key,
-	role varchar(100)
-);
+insert into roles (id, role) values(1, 'ADMIN'),
+(2, 'USER');
 
+insert into users_to_roles (userid, roleid) values(1,1),(2,2),(3,2);
+insert into users_to_roles (userid, roleid) values(4,1);
 
-create table Users_to_Roles(
-	userID smallint not null,
-	roleID smallint not null,
-	primary key(userID, roleID),
-	foreign key (userID) references Users(id) on delete cascade,
-	foreign key (roleID) references Roles(id)
-);
+insert into date_visit (id, userid, datevisit) values(1,1, (select now()));
 
-create table Department(
-    id serial primary key,
-    title varchar(100) not null unique,
-    managerID smallint not null,
-    foreign key (managerID) references Users(id) on delete cascade
-);
-
-create table Users_to_Departments(
-    userID smallint not null,
-    departmentID smallint not null,
-    primary key(userID, departmentID),
-    foreign key (userID) references Users(id) on delete cascade,
-    foreign key (departmentID) references Department(id) on delete cascade
-);
-
-create table Groups(
-    id serial primary key,
-    title varchar(100) unique,
-    adminID smallint not null,
-    foreign key (adminID) references Users(id) on delete cascade
-);
-
-
-create table Users_to_Groups(
-    userID smallint not null,
-    groupID smallint not null,
-    primary key(userID, groupID),
-    foreign key (userID) references Users(id) on delete cascade,
-    foreign key (groupID) references Groups(id) on delete cascade
-);
-
-create table Messages(
-	id serial primary key,
-	userID smallint not null,
-	groupID smallint not null,
-	dateMSG timestamptz not null,
-	msg text not null,
-	foreign key (userID) references Users(id) on delete cascade,
-    foreign key (groupID) references Groups(id) on delete cascade
-);
-
-alter table Messages add
-	msg text not null;
-
-
-create table Date_visit (
-    id serial primary key,
-	userID smallint not null,
-	datevisit timestamptz not null,
-	foreign key (userID) references Users(id) on delete cascade
-);
 
 select * from date_visit ;
 
-create table Request_add_group (
-	id serial primary key,
-	userID smallint not null,
-	groupID smallint not null,
-	daterequest timestamptz not null,
-	foreign key (userID) references Users(id) on delete cascade,
-    foreign key (groupID) references Groups(id) on delete cascade
-);
 
 select * from date_visit dv ;
+
 insert into date_visit (id, userid, datevisit) values(1, 1, (select now()));
 
-select now();
 
 select rag.id, username, title from request_add_group rag 
 inner join users u on rag.userid = u.id 
@@ -148,7 +80,6 @@ select * from department d ;
 select * from users_to_roles utr;
 select * from users_to_departments utd ;
 
-insert into roles (id, role) values(3, 'MANADGER');
 
 select max(id) as id from department;
 
@@ -211,7 +142,8 @@ inner join users u2 on dv.userid = u2.id
 where u2.username = 'asd2'
 );
 
-drop table users ;
+
+
 --(
 --select datevisit from date_visit dv 
 --inner join users u2 on dv.userid = u2.id
@@ -220,10 +152,7 @@ drop table users ;
 
 
 -- min day
-select username from request_add_group rag 
-inner join users u on rag.userid = u.id 
-inner join groups g on rag.groupid  = g.id 
-where title = 'gr1';
+
 
 
 

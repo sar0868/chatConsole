@@ -107,8 +107,6 @@ public class ClientHandler {
                             getTitlesGroups();
                         } else if (msg.startsWith("/requestaddgroup ")) {
                             requestAddGroup(msg);
-                            //клиент получает "Ваш запрос на добавление в группу group1 создан" (клиент уже входит в
-                            //эту группу при этом не нужно получать такое сообщение
                         } else if (msg.startsWith("/leavegroup")) {
                             leaveGroup();
                         } else if (msg.startsWith("/review")) {
@@ -172,6 +170,7 @@ public class ClientHandler {
                 if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
                     setGroup(array[1]);
                     sendMessage("Вы вошли в группу " + groupTitle);
+                    reviewrequest();
                 }
             } else if (groupTitle.equals(array[1])) {
                 sendMessage("Вы уже находитесь в группе " + groupTitle);

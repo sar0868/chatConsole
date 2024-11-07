@@ -49,7 +49,7 @@ public interface ClientService extends AutoCloseable{
 
     String getUsernameManagerGroup(String groupTitle);
 
-    List<String> getUsernameSentRequest(String groupTitle, String username);
+    List<String> getUsernameSentRequest(String groupTitle);
 
 //    int getMaxGroupID();
 }

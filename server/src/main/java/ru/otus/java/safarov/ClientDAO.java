@@ -496,18 +496,14 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public List<String> getUsernameSentRequest(String groupTitle, String username) {
+    public List<String> getUsernameSentRequest(String groupTitle) {
         String stmt = "select username from request_add_group rag " +
                 "inner join users u on rag.userid = u.id " +
                 "inner join groups g on rag.groupid  = g.id " +
-                " where title = ? " +
-                "and daterequest > (select datevisit from date_visit dv " +
-                "inner join users u2 on dv.userid = u2.id " +
-                "where u2.username = ?)";
+                " where title = ? ";
         List<String> requestList = new ArrayList<>();
         try(PreparedStatement pst = connection.prepareStatement(stmt)){
             pst.setString(1, groupTitle);
-            pst.setString(2, username);
             try(ResultSet resultSet = pst.executeQuery()){
                 while (resultSet.next()){
                     String name = resultSet.getString(2);

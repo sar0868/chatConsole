@@ -108,3 +108,31 @@ INFO  2024-11-07 13:32:34 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientH
 INFO  2024-11-07 13:33:20 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:176) - Пользователю asd2 не удалось сменить группу на team3
 INFO  2024-11-07 13:35:01 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
 INFO  2024-11-07 13:35:29 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:286) - Клиенту qwe1 отравлено сообщение о закрытии
+INFO  2024-11-07 23:14:00 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 23:14:00 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 23:14:16 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd1 прошел аутентификацию.
+INFO  2024-11-07 23:15:54 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 23:15:54 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 23:44:01 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 23:44:01 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 23:45:02 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:46) - Клиент asd1 зарегистрирован.
+INFO  2024-11-07 23:45:45 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:308) - Клиенту asd1 отравлено сообщение о закрытии
+INFO  2024-11-07 23:45:57 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd1 прошел аутентификацию.
+INFO  2024-11-07 23:46:02 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:308) - Клиенту asd1 отравлено сообщение о закрытии
+INFO  2024-11-07 23:46:27 [Thread-2] ru.otus.java.safarov.ClientHandler (ClientHandler.java:46) - Клиент qwe1 зарегистрирован.
+INFO  2024-11-07 23:46:31 [Thread-2] ru.otus.java.safarov.ClientHandler (ClientHandler.java:308) - Клиенту qwe1 отравлено сообщение о закрытии
+INFO  2024-11-07 23:47:06 [Thread-3] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd1 прошел аутентификацию.
+INFO  2024-11-07 23:47:14 [Thread-3] ru.otus.java.safarov.ClientHandler (ClientHandler.java:100) - Группа gr1 создана
+INFO  2024-11-07 23:47:56 [Thread-3] ru.otus.java.safarov.ClientHandler (ClientHandler.java:100) - Группа gr2 создана
+INFO  2024-11-07 23:48:06 [Thread-3] ru.otus.java.safarov.ClientHandler (ClientHandler.java:308) - Клиенту asd1 отравлено сообщение о закрытии
+INFO  2024-11-07 23:48:17 [Thread-4] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-07 23:49:26 [Thread-4] ru.otus.java.safarov.ClientHandler (ClientHandler.java:100) - Группа team1 создана
+INFO  2024-11-07 23:49:30 [Thread-4] ru.otus.java.safarov.ClientHandler (ClientHandler.java:308) - Клиенту qwe1 отравлено сообщение о закрытии
+INFO  2024-11-07 23:50:30 [Thread-5] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd1 прошел аутентификацию.
+INFO  2024-11-07 23:50:51 [Thread-5] ru.otus.java.safarov.ClientHandler (ClientHandler.java:308) - Клиенту asd1 отравлено сообщение о закрытии
+INFO  2024-11-07 23:51:24 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 23:51:24 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 23:51:36 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd1 прошел аутентификацию.
+INFO  2024-11-07 23:53:54 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:38) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-07 23:53:54 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
+INFO  2024-11-07 23:54:02 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент asd1 прошел аутентификацию.
