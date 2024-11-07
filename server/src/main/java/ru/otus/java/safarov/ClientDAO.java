@@ -308,7 +308,7 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
-    public int addGroup(String title, String password, String username) {
+    public int addGroup(String title, String username) {
         int result = -1;
         int groupID = getMaxID("groups") + 1;
         int userID = getUserID(username);
@@ -317,12 +317,11 @@ public class ClientDAO implements ClientService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        String INSERT_DEPARTMENT = "insert into groups(id, title, adminid, password) values(?, ?, ?, ?)";
+        String INSERT_DEPARTMENT = "insert into groups(id, title, adminid) values(?, ?, ?)";
         try (PreparedStatement pst = connection.prepareStatement(INSERT_DEPARTMENT)) {
             pst.setInt(1, groupID);
             pst.setString(2, title);
             pst.setInt(3, userID);
-            pst.setString(4, password);
             result = pst.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

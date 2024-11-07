@@ -43,7 +43,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     private String getUserNameByLoginAndPassword(String login, String password) {
-        if (inMemory){
+        if (inMemory) {
             for (User user : users) {
                 if (user.getLogin().equals(login) && user.getPassword().equals(password)) {
                     return user.getUsername();
@@ -67,7 +67,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(authName);
         server.subscribe(clientHandler);
-        if (!clientDAO.updateDateVisit(authName)){
+        if (!clientDAO.updateDateVisit(authName)) {
             logger.info("date don't added");
         }
         clientHandler.sendMessage("/authok " + authName);
@@ -76,26 +76,26 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public boolean registration(ClientHandler clientHandler, String login, String password, String username) {
-        if(login.trim().length() < 3 || password.trim().length() < 6
-        || username.trim().length() < 2){
+        if (login.trim().length() < 3 || password.trim().length() < 6
+                || username.trim().length() < 2) {
             clientHandler.sendMessage("""
                     Логин должен быть 3 более символов,
                     длина пароля 6 и более символов,
                     имя пользователя длиной 2 и более символов.""");
             return false;
         }
-        if (isLoginAlreadyExist(login)){
+        if (isLoginAlreadyExist(login)) {
             clientHandler.sendMessage("Указанный логин уже занят.");
             return false;
         }
-        if (isUserNameAlreadyExist(username)){
+        if (isUserNameAlreadyExist(username)) {
             clientHandler.sendMessage("Указанное имя пользователя уже занято.");
             return false;
         }
-        if (inMemory){
+        if (inMemory) {
             users.add(new User(login, password, username));
         }
-        if (!inMemory && clientDAO.addUser(clientDAO.getAll().size()+1,new User(login, password, username)) == -1){
+        if (!inMemory && clientDAO.addUser(clientDAO.getAll().size() + 1, new User(login, password, username)) == -1) {
             String msgError = username + " не зарегистрирован.";
             logger.info(msgError);
             clientHandler.sendMessage(msgError);
@@ -109,9 +109,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     private boolean isUserNameAlreadyExist(String username) {
-        if(inMemory){
+        if (inMemory) {
             for (User user : users) {
-                if (user.getUsername().equals(username)){
+                if (user.getUsername().equals(username)) {
                     return true;
                 }
             }
@@ -120,14 +120,14 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.isUserName(username);
     }
 
-    private void updateDateVisit(String username){
+    private void updateDateVisit(String username) {
         clientDAO.addDateVisit(username);
     }
 
     private boolean isLoginAlreadyExist(String login) {
-        if(inMemory){
+        if (inMemory) {
             for (User user : users) {
-                if (user.getLogin().equals(login)){
+                if (user.getLogin().equals(login)) {
                     return true;
                 }
             }
@@ -136,17 +136,17 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.isLogin(login);
     }
 
-    private Role getRole(String username){
-        if (inMemory){
+    private Role getRole(String username) {
+        if (inMemory) {
             for (User user : users) {
-                if (user.getUsername().equals(username)){
+                if (user.getUsername().equals(username)) {
                     return user.getRole();
                 }
             }
             return null;
         }
 
-        if(clientDAO.getRole(username).equals("ADMIN")){
+        if (clientDAO.getRole(username).equals("ADMIN")) {
             return Role.ADMIN;
         }
         return Role.USER;
@@ -159,9 +159,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public boolean changeUsername(ClientHandler clientHandler, String username) {
-        if (inMemory){
+        if (inMemory) {
             for (User user : users) {
-                if(user.getUsername().equals(clientHandler.getName())){
+                if (user.getUsername().equals(clientHandler.getName())) {
                     user.setUsername(username);
                     return true;
                 }
@@ -172,19 +172,19 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public boolean addDepartment(ClientHandler clientHandler, String title, String login) {
-        if (isTitleAlreadyExist(title)){
+        if (isTitleAlreadyExist(title)) {
             clientHandler.sendMessage("Указанный отдел уже существует.");
             return false;
         }
-        if (!isLoginAlreadyExist(login)){
+        if (!isLoginAlreadyExist(login)) {
             clientHandler.sendMessage("Нет пользователя с таким логином.");
             return false;
         }
-        if (inMemory){
+        if (inMemory) {
             departments.add(new Department(title));
             return true;
         }
-        if (clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1){
+        if (clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1) {
             String msgError = title + " не создан.";
             logger.info(msgError);
             clientHandler.sendMessage(msgError);
@@ -195,9 +195,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     private boolean isTitleAlreadyExist(String title) {
-        if(inMemory){
+        if (inMemory) {
             for (Department department : departments) {
-                if (department.getTitle().equals(title)){
+                if (department.getTitle().equals(title)) {
                     return true;
                 }
             }
@@ -207,29 +207,27 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public boolean addGroup(ClientHandler clientHandler, String title, String password) {
-        if(title.trim().length() < 3 || password.trim().length() < 6){
-            clientHandler.sendMessage("""
-                    Название группы должно быть 3 более символов,
-                    длина пароля 6 и более символов""");
+    public boolean addGroup(ClientHandler clientHandler, String title) {
+        if (title.trim().length() < 2) {
+            clientHandler.sendMessage(" Название группы должно быть более 2 символов");
             return false;
         }
-        if (isGroupAlreadyExist(title) != -1){
+        if (isGroupAlreadyExist(title) != -1) {
             clientHandler.sendMessage("Указанная группа уже существует.");
             return false;
         }
 
-        if (inMemory){
+        if (inMemory) {
             for (Group group : groups) {
-                if (group.getTitle().equals(title)){
+                if (group.getTitle().equals(title)) {
                     clientHandler.sendMessage("Указанная группа уже существует.");
                     return false;
                 }
             }
-            groups.add(new Group(nextIDGroup(), title, password));
+            groups.add(new Group(nextIDGroup(), title));
             return true;
         }
-        if (clientDAO.addGroup(title, password, clientHandler.getName()) == -1){
+        if (clientDAO.addGroup(title, clientHandler.getName()) == -1) {
             String msgError = title + " не создан.";
             logger.info(msgError);
             clientHandler.sendMessage(msgError);
@@ -243,17 +241,17 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         int id = 0;
         for (Group group : groups) {
             int el = group.getId();
-            if (id > el){
+            if (id > el) {
                 id = el;
             }
         }
-        return id+1;
+        return id + 1;
     }
 
     private int isGroupAlreadyExist(String title) {
-        if (inMemory){
+        if (inMemory) {
             for (Group group : groups) {
-                if (group.getTitle().equals(title)){
+                if (group.getTitle().equals(title)) {
                     return 1;
                 }
             }
@@ -270,7 +268,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     @Override
     public List<String> getGroupTitle(ClientHandler clientHandler) {
         List<String> titleGroups = new ArrayList<>();
-        if(inMemory){
+        if (inMemory) {
             for (Group group : groups) {
                 titleGroups.add(group.getTitle());
             }
@@ -282,37 +280,53 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public void enterGroup(ClientHandler clientHandler, String groupTitle, String password) {
-//        String nameIsGroup = getUserNameByLoginAndPassword(login, password);
-//        if (authName == null) {
-//            clientHandler.sendMessage("Некорректный логин/пароль");
-//            return false;
-//        }
-//        if (server.isName(authName)) {
-//            clientHandler.sendMessage("Имя пользователя занято.");
-//            return false;
-//        }
-//        clientHandler.setName(authName);
-//        server.subscribe(clientHandler);
-//        clientHandler.sendMessage("/authok " + authName);
-//        return true;
+    public boolean enterGroup(ClientHandler clientHandler, String groupTitle) {
+        //есть ли группа и является ли пользователем членом группы, если да, то вход
+        //иначе сообщение "Вы не являетесь членом группы, можете отправить запрос на
+        //добавление в группу /requestaddgroup <имя группы>"
+
+        int groupID = isGroupAlreadyExist(groupTitle);
+        if (groupID == -1) {
+            clientHandler.sendMessage("Группы " + groupTitle + " не существует");
+            return false;
+        }
+        if (!isMemberGroup(clientHandler.getName(), groupID)) {
+            clientHandler.sendMessage("Вы не являетесь членом группы, можете отправить запрос на " +
+                    "добавление в группу /requestaddgroup <имя группы>");
+            return false;
+        }
+//        clientHandler.sendMessage("Вы вошли в группу " + groupTitle);
+        return true;
     }
+
+//    private int isExistGroupAndMember(ClientHandler clientHandler, String groupTitle){
+//        int groupID = isGroupAlreadyExist(groupTitle);
+//        if (groupID == -1){
+//            clientHandler.sendMessage("Группы " + groupTitle + " не существует");
+//            return groupID;
+//        }
+//        if (isMemberGroup(clientHandler.getName(), groupID)){
+//            clientHandler.sendMessage("Вы уже являетесь членом группы " + groupTitle +
+//                    ".\nДля входа в группу введите /enter " + groupTitle);
+//        }
+//        return groupID;
+//    }
 
     @Override
     public boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle) {
         // есть ли такая группа, не является ли пользователь уже членом группы, есть ли уже запрос на добавление
         // создать запрос (сделать все одним запросом или собирать данные)
         int groupID = isGroupAlreadyExist(groupTitle);
-        if (groupID == -1){
+        if (groupID == -1) {
             clientHandler.sendMessage("Группы " + groupTitle + " не существует");
             return false;
         }
-        if (isMemberGroup(clientHandler.getName(), groupID)){
+        if (isMemberGroup(clientHandler.getName(), groupID)) {
             clientHandler.sendMessage("Вы уже являетесь членом группы " + groupTitle +
                     ".\nДля входа в группу введите /enter " + groupTitle);
             return false;
         }
-        if (isExistRequest(clientHandler.getName(), groupID)){
+        if (isExistRequest(clientHandler.getName(), groupID)) {
             clientHandler.sendMessage("Вы уже направляли запрос на добавление в группу " + groupTitle +
                     ". Ваш запрос еще не рассмотрен.");
             return false;

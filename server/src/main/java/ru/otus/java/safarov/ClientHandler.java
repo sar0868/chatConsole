@@ -50,8 +50,8 @@ public class ClientHandler {
                         }
                     }
                     sendMessage("Отправка и получение сообщений доступна\n" +
-                                "только после аутентификации (команда: /auth login passowrd)\n" +
-                                "или после регистрации (команда: /register login password username)");
+                            "только после аутентификации (команда: /auth login passowrd)\n" +
+                            "или после регистрации (команда: /register login password username)");
                 }
                 // завершение аутентификации и регистрации
                 while (true) {
@@ -95,13 +95,15 @@ public class ClientHandler {
                             }
                         } else if (msg.startsWith("/group ")) {
                             if (createGroup(msg)) {
-                                String resultAddGroup = "Группа " + msg.trim().split("\\s+")[1] + " создана";
+                                String newTitleGroup = msg.trim().split("\\s+")[1];
+                                String resultAddGroup = "Группа " + newTitleGroup + " создана";
                                 logger.info(resultAddGroup);
                                 sendMessage(resultAddGroup);
+                                enterGroup("/enter " + newTitleGroup);
                             }
                         } else if (msg.startsWith("/enter ")) {
                             enterGroup(msg);
-                        } else if (msg.startsWith("/groupslist")){
+                        } else if (msg.startsWith("/groupslist")) {
                             getTitlesGroups();
                         } else if (msg.startsWith("/requestaddgroup ")) {
                             requestAddGroup(msg);
@@ -130,9 +132,9 @@ public class ClientHandler {
     }
 
     private void leaveGroup() {
-        if (groupTitle.isEmpty()){
+        if (groupTitle.isEmpty()) {
             sendMessage("Вы не входили ни в одну из групп");
-        }  else {
+        } else {
             String yuoGroup = groupTitle;
             groupTitle = "";
             sendMessage("Вы вышли из группы " + yuoGroup);
@@ -142,28 +144,37 @@ public class ClientHandler {
     private void requestAddGroup(String msg) {
         // /addgroup <имя группы>
         String[] array = msg.trim().split(("\\s+"));
-        if (array.length != 2){
+        if (array.length != 2) {
             sendMessage("Некорректный формат ввода команды /addgroup");
         } else {
-            if(!server.getAuthenticatedProvider().addRequestAddGroup(this, array[1])){
+            if (!server.getAuthenticatedProvider().addRequestAddGroup(this, array[1])) {
                 logger.info("Запрос на добавление группы {} не создан", array[1]);
             } else {
                 sendMessage("Ваш запрос на добавление в группу " + array[1] + " создан");
             }
         }
-     }
+    }
 
     private void enterGroup(String msg) {
-        // /enter groupTitle password_group
+        // /enter groupTitle
         String[] array = msg.trim().split("\\s+");
-        if (array.length != 3) {
+        if (array.length != 2) {
             sendMessage("Некорректный формат ввода команды /enter");
         } else {
             if (groupTitle.isEmpty()) {
-                server.getAuthenticatedProvider().enterGroup(this, array[1], array[2]);
+                if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
+                    getGroup(array[1]);
+                    sendMessage("Вы вошли в группу " + groupTitle);
+                }
+            } else if (groupTitle.equals(array[1])) {
+                sendMessage("Вы уже находитесь в группе " + groupTitle);
+            } else if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
+                leaveGroup();
                 getGroup(array[1]);
+                sendMessage("Вы вошли в группу " + groupTitle);
             } else {
-                sendMessage("Для создания группы необходимо выйти из группы " + groupTitle + " командой /leavegroup");
+                logger.info("Пользователю {} не удалось сменить группу на {}", getName(), array[1]);
+                sendMessage("Не удалось сменить группу на " + array[1]);
             }
         }
     }
@@ -180,11 +191,11 @@ public class ClientHandler {
     private boolean createGroup(String msg) {
 //        /group <title> <password>
         String[] array = msg.trim().split("\\s+");
-        if (array.length != 3) {
+        if (array.length != 2) {
             sendMessage("Некорректный формат ввода команды /group");
             return false;
         }
-        return server.getAuthenticatedProvider().addGroup(this, array[1], array[2]);
+        return server.getAuthenticatedProvider().addGroup(this, array[1]);
     }
 
     private void getDepartments() {

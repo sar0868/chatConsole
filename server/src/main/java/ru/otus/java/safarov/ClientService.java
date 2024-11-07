@@ -31,7 +31,7 @@ public interface ClientService extends AutoCloseable{
 
     int getGroupID(String title);
 
-    int addGroup(String title, String password, String username);
+    int addGroup(String title, String username);
 
     int insertUsersToGroups(int userId, int groupID);
 

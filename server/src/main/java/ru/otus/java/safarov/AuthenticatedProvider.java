@@ -19,11 +19,11 @@ public interface AuthenticatedProvider {
 
     Set<Department> getDepartments();
 
-    boolean addGroup(ClientHandler clientHandler, String title, String password);
+    boolean addGroup(ClientHandler clientHandler, String title);
 
     List<String> getGroupTitle(ClientHandler clientHandler);
 
-    void enterGroup(ClientHandler clientHandler, String groupTitle, String password);
+    boolean enterGroup(ClientHandler clientHandler, String groupTitle);
 
     boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle);
 
