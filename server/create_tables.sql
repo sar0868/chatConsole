@@ -196,6 +196,11 @@ select username from groups g
 inner join users u on g.adminid = u.id 
 where title = 'gr1';
 
+--with dv as 
+--(select datevisit from date_visit dv 
+--inner join users u2 on dv.userid = u2.id
+--where u2.username = 'asd2'
+--)
 select rag.id, u.username from request_add_group rag
 inner join users u on rag.userid = u.id 
 inner join groups g on rag.groupid  = g.id 
@@ -203,8 +208,16 @@ where title = 'gr1'
 and daterequest > (
 select datevisit from date_visit dv 
 inner join users u2 on dv.userid = u2.id
-where u2.username = 'admin'
+where u2.username = 'asd2'
 );
+
+
+
+--(
+--select datevisit from date_visit dv 
+--inner join users u2 on dv.userid = u2.id
+--where u2.username = 'asd2'
+--);
 
 
 -- min day
