@@ -37,10 +37,6 @@ public interface ClientService extends AutoCloseable{
 
     List<String> getGroupTitle();
 
-    boolean updateDateVisit(String authName);
-
-    boolean addDateVisit(String username);
-
     boolean isMemberGroup(String username, int groupID);
 
     boolean addRequestAddGroup(String username, int groupID);

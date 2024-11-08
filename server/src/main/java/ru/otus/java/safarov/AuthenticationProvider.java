@@ -42,7 +42,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
     }
 
-    private String getUserNameByLoginAndPassword(String login, String password) {
+    private synchronized String getUserNameByLoginAndPassword(String login, String password) {
         if (inMemory) {
             for (User user : users) {
                 if (user.getLogin().equals(login) && user.getPassword().equals(password)) {
@@ -67,20 +67,13 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(authName);
         server.subscribe(clientHandler);
-        updateDateVisit(authName);
         clientHandler.sendMessage("/authok " + authName);
         return true;
     }
 
-    @Override
-    public void updateDateVisit(String username) {
-        if (!clientDAO.updateDateVisit(username)) {
-            logger.info("date visit don't added");
-        }
-    }
 
     @Override
-    public boolean registration(ClientHandler clientHandler, String login, String password, String username) {
+    public synchronized boolean registration(ClientHandler clientHandler, String login, String password, String username) {
         if (login.trim().length() < 3 || password.trim().length() < 6
                 || username.trim().length() < 2) {
             clientHandler.sendMessage("""
@@ -108,9 +101,6 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(username);
         server.subscribe(clientHandler);
-        if(!addDateVisit(username)){
-            logger.info("date visit don't create");
-        }
         clientHandler.sendMessage("/regok " + username);
         return true;
     }
@@ -127,9 +117,6 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.isUserName(username);
     }
 
-    private boolean addDateVisit(String username) {
-        return clientDAO.addDateVisit(username);
-    }
 
     private boolean isLoginAlreadyExist(String login) {
         if (inMemory) {

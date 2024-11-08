@@ -57,7 +57,7 @@ public class Server {
         clients.remove(clientHandler.getName());
     }
 
-    public void sendMessageClient(ClientHandler clientHandler, String recipient, String msgToPersonal) {
+    public synchronized void sendMessageClient(ClientHandler clientHandler, String recipient, String msgToPersonal) {
         if (clients.containsKey(recipient)) {
             clients.get(recipient).sendMessage(clientHandler.getName() + ": " + msgToPersonal + " time: " +
                     new Date());
@@ -71,7 +71,7 @@ public class Server {
         clientHandler.sendMessage(Arrays.toString(clients.keySet().toArray()));
     }
 
-    public boolean isName(String name) {
+    public synchronized boolean isName(String name) {
         return clients.containsKey(name);
     }
 
@@ -93,5 +93,15 @@ public class Server {
             client.exit();
             client.disconnect();
         }
+    }
+
+    public synchronized void sendMessageGroup(ClientHandler clientHandler, String groupTitle, String msgToGroup) {
+//        if (clients.containsKey(recipient)) {
+//            clients.get(recipient).sendMessage(clientHandler.getName() + ": " + msgToPersonal + " time: " +
+//                    new Date());
+//        } else {
+//            clientHandler.sendMessage("Клиента с ником " + recipient + " нет в сети." +
+//                    " time: " + new Date());
+//        }
     }
 }

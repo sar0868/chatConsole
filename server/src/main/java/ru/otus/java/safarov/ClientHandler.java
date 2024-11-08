@@ -73,10 +73,10 @@ public class ClientHandler {
                                 String infoMsg = "Клиент " + oldName + " изменил username на " + getName();
                                 logger.info(infoMsg);
                                 sendMessage(infoMsg);
-                                continue;
+                            } else{
+                                String infoMsg = "Не удалось изменить имя клиента " + oldName;
+                                logger.info(infoMsg);
                             }
-                            String infoMsg = "Не удалось изменить имя клиента " + oldName;
-                            logger.info(infoMsg);
                         } else if (msg.startsWith("/department")) {
                             if (createDepartment(msg)) {
                                 String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
@@ -111,6 +111,8 @@ public class ClientHandler {
                             leaveGroup();
                         } else if (msg.startsWith("/review")) {
                             acceptReview(msg);
+                        } else if (msg.startsWith("/wg ")) {
+                            groupMsg(msg);
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -129,6 +131,19 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private void groupMsg(String msg) {
+//        /wg message
+        msg = msg.trim().replaceAll("\\s+", " ");
+        String[] array = msg.split(" ");
+        if (array.length < 2) {
+            sendMessage("Некорректный формат ввода");
+        } else {
+            String msgToGroup = String.join(", ", Arrays.stream(array, 1, array.length)
+                    .toArray(String[]::new));
+            server.sendMessageGroup(this, groupTitle, msgToGroup);
+        }
     }
 
     private void acceptReview(String msg) {

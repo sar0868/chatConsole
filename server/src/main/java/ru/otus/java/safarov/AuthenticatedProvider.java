@@ -30,8 +30,6 @@ public interface AuthenticatedProvider {
 
     List<String> getListRequest(ClientHandler clientHandler, String groupTitle);
 
-    void updateDateVisit(String username);
-
     void addUsersToGroup(ClientHandler clientHandler, List<String> addUsers);
 
     void removeRequestAddUserToGroup(ClientHandler clientHandler);

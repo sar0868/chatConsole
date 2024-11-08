@@ -375,36 +375,6 @@ public class ClientDAO implements ClientService {
         return titleGroups;
     }
 
-    @Override
-    public boolean updateDateVisit(String authName) {
-        String stmt = "update date_visit set prevvisit = datevisit, datevisit = (select now()) where userid = ?";
-        int result = -1;
-        int userID = getUserID(authName);
-        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
-            pst.setInt(1, userID);
-            result = pst.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return result == 1;
-    }
-
-    @Override
-    public boolean addDateVisit(String username) {
-        int result = -1;
-        String stmt = "insert into Date_visit(id, userID, datevisit, prevvisit) " +
-                " values(?, ?, (select now()), (select now()))";
-        int recordID = getMaxID("date_visit") + 1;
-        int userID = getUserID(username);
-        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
-            pst.setInt(1, recordID);
-            pst.setInt(2, userID);
-            result = pst.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return result == 1;
-    }
 
     @Override
     public boolean isMemberGroup(String username, int groupID) {

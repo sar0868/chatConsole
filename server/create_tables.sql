@@ -61,14 +61,6 @@ create table Messages(
     foreign key (groupID) references Groups(id) on delete cascade
 );
 
-create table Date_visit (
-    id serial primary key,
-	userID smallint not null,
-	datevisit timestamptz not null,
-	prevvisit timestamptz not null,
-	foreign key (userID) references Users(id) on delete cascade
-);
-
 
 create table Request_add_group (
 	id serial primary key,
