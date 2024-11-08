@@ -16,7 +16,6 @@ public interface AuthenticatedProvider {
 
     boolean addDepartment(ClientHandler clientHandler, String title, String login);
 
-
     Set<Department> getDepartments();
 
     boolean addGroup(ClientHandler clientHandler, String title);
@@ -30,4 +29,10 @@ public interface AuthenticatedProvider {
     boolean isManagerGroup(ClientHandler clientHandler);
 
     List<String> getListRequest(ClientHandler clientHandler, String groupTitle);
+
+    void updateDateVisit(String username);
+
+    void addUsersToGroup(ClientHandler clientHandler, List<String> addUsers);
+
+    void removeRequestAddUserToGroup(ClientHandler clientHandler);
 }

@@ -9,7 +9,30 @@ insert into roles (id, role) values(1, 'ADMIN'),
 insert into users_to_roles (userid, roleid) values(1,1),(2,2),(3,2);
 insert into users_to_roles (userid, roleid) values(4,1);
 
-insert into date_visit (id, userid, datevisit) values(1,1, (select now()));
+--with prev as (
+--select datevisit from date_visit dv where userid = 3
+--)
+update date_visit set  prevvisit = datevisit, datevisit = (select now()) where userid = 3;
+select * from date_visit dv where userid = 3;
+
+
+
+
+insert into date_visit (id, userid, datevisit, prevvisit) values(1,1, (select now()), (select now()));
+insert into date_visit (id, userid, datevisit, prevvisit) values(2,2, (select now()), (select now())),
+(3,3, (select now()), (select now())), (4,4, (select now()), (select now()));
+
+
+insert into users_to_groups (userid, groupid) values ((select id from users where username = 'qwe1'),
+(select id from "groups" where title = 'gr1'));
+
+
+insert into request_add_group (id, userid, groupid) values
+(2, 1, 2),
+(3, 3, 2),
+(4, 4, 2);
+
+delete from request_add_group where groupid = (select id from "groups" where title = 'team1');
 
 
 select * from date_visit ;
@@ -23,19 +46,16 @@ insert into date_visit (id, userid, datevisit) values(1, 1, (select now()));
 select rag.id, username, title from request_add_group rag 
 inner join users u on rag.userid = u.id 
 inner join "groups" g ON rag.groupid = g.id 
-where rag.groupid = 1 and 
-rag.daterequest > 'Mon Oct 13 15:21:15 MSK 2024';
+where rag.groupid = 1;
 
 delete from request_add_group 
 where id in (select rag.id from request_add_group rag 
 inner join users u on rag.userid = u.id 
 inner join "groups" g ON rag.groupid = g.id 
-where rag.groupid = 1 and 
-rag.daterequest > 'Mon Oct 13 15:21:15 MSK 2024');
+where rag.groupid = 1;
 -- id = полученному id запроса
 
 
-select * from request_add_group rag ;
 select * from date_visit dv ;
 
 
@@ -103,7 +123,6 @@ select now();
 insert into date_visit(datevisit, id , userid) values((select now()), 3, 6);
 select * from date_visit dv;
 
-drop t
 
 select * from users_to_groups utg ;
 select count(userid) from users_to_groups utg 
@@ -113,7 +132,7 @@ select id from "groups" g where title = 'gr2';
 
 
 select * from request_add_group rag ;
-insert into request_add_group (id, userid, groupid, daterequest) values(2, 2, 2, (select now()));
+insert into request_add_group (id, userid, groupid) values(2, 2, 2);
 
 select id from groups where title = ('gr1');
 
@@ -135,12 +154,14 @@ where title = 'gr1';
 select rag.id, u.username from request_add_group rag
 inner join users u on rag.userid = u.id 
 inner join groups g on rag.groupid  = g.id 
-where title = 'gr1' 
-and daterequest > (
-select datevisit from date_visit dv 
-inner join users u2 on dv.userid = u2.id
-where u2.username = 'asd2'
-);
+where title = 'gr1'; 
+
+
+--and daterequest > (
+--select datevisit from date_visit dv 
+--inner join users u2 on dv.userid = u2.id
+--where u2.username = 'asd2'
+--);
 
 
 
@@ -153,7 +174,10 @@ where u2.username = 'asd2'
 
 -- min day
 
-
+select username from request_add_group rag 
+inner join users u on rag.userid = u.id 
+inner join groups g on rag.groupid  = g.id 
+where title = 'gr1';
 
 
 

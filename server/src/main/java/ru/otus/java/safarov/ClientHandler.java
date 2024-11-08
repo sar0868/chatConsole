@@ -133,6 +133,18 @@ public class ClientHandler {
 
     private void acceptReview(String msg) {
         //разобрать строку и добавить в группу и удалить из request все записи по этой группе
+        String[] array = msg.trim().split(("\\s+"));
+        if(array.length > 1){
+            List<String> addUsers = new ArrayList<>();
+            for (int i = 1; i < array.length; i++) {
+                if(requestsAddGroups.get(groupTitle).contains(array[i])){
+                    addUsers.add(array[i]);
+                }
+            }
+            server.getAuthenticatedProvider().addUsersToGroup(this, addUsers);
+        }
+        server.getAuthenticatedProvider().removeRequestAddUserToGroup(this);
+        requestsAddGroups.remove(groupTitle);
 
     }
 
@@ -194,7 +206,7 @@ public class ClientHandler {
         if(server.getAuthenticatedProvider().isManagerGroup(this)){
             List<String> usersSentRequest= server.getAuthenticatedProvider().getListRequest(this, groupTitle);
             requestsAddGroups.put(groupTitle, usersSentRequest);
-            sendMessage("/review " + usersSentRequest);
+            sendMessage("review: " + usersSentRequest);
         }
     }
 

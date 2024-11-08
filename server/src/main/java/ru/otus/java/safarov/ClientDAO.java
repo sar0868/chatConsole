@@ -377,7 +377,7 @@ public class ClientDAO implements ClientService {
 
     @Override
     public boolean updateDateVisit(String authName) {
-        String stmt = "update Date_visit set datevisit = (select now()) where userid = ?";
+        String stmt = "update date_visit set prevvisit = datevisit, datevisit = (select now()) where userid = ?";
         int result = -1;
         int userID = getUserID(authName);
         try (PreparedStatement pst = connection.prepareStatement(stmt)) {
@@ -392,7 +392,8 @@ public class ClientDAO implements ClientService {
     @Override
     public boolean addDateVisit(String username) {
         int result = -1;
-        String stmt = "insert into Date_visit(id, userID, datevisit) values(?, ?, (select now()))";
+        String stmt = "insert into Date_visit(id, userID, datevisit, prevvisit) " +
+                " values(?, ?, (select now()), (select now()))";
         int recordID = getMaxID("date_visit") + 1;
         int userID = getUserID(username);
         try (PreparedStatement pst = connection.prepareStatement(stmt)) {
@@ -442,7 +443,7 @@ public class ClientDAO implements ClientService {
 
     @Override
     public boolean addRequestAddGroup(String username, int groupID) {
-        String stmt = "insert into request_add_group (id, userid, groupid, daterequest) values(?, ?, ?, (select now()))";
+        String stmt = "insert into request_add_group (id, userid, groupid) values(?, ?, ?)";
         int requestID = getMaxID("request_add_group") + 1;
         int userid = getUserID(username);
         int result = -1;
@@ -506,7 +507,7 @@ public class ClientDAO implements ClientService {
             pst.setString(1, groupTitle);
             try(ResultSet resultSet = pst.executeQuery()){
                 while (resultSet.next()){
-                    String name = resultSet.getString(2);
+                    String name = resultSet.getString(1);
                     requestList.add(name);
                 }
             }
@@ -514,6 +515,19 @@ public class ClientDAO implements ClientService {
             throw new RuntimeException(e);
         }
         return requestList;
+    }
+
+    @Override
+    public int deleteRequestAddUserToGroup(String groupTitle) {
+        String stmt = "delete from request_add_group where groupid = (select id from groups where title = ?)";
+        int result;
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, groupTitle);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
     @Override

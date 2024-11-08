@@ -67,11 +67,16 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(authName);
         server.subscribe(clientHandler);
-        if (!clientDAO.updateDateVisit(authName)) {
-            logger.info("date don't added");
-        }
+        updateDateVisit(authName);
         clientHandler.sendMessage("/authok " + authName);
         return true;
+    }
+
+    @Override
+    public void updateDateVisit(String username) {
+        if (!clientDAO.updateDateVisit(username)) {
+            logger.info("date visit don't added");
+        }
     }
 
     @Override
@@ -103,7 +108,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         clientHandler.setName(username);
         server.subscribe(clientHandler);
-        updateDateVisit(username);
+        if(!addDateVisit(username)){
+            logger.info("date visit don't create");
+        }
         clientHandler.sendMessage("/regok " + username);
         return true;
     }
@@ -120,8 +127,8 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.isUserName(username);
     }
 
-    private void updateDateVisit(String username) {
-        clientDAO.addDateVisit(username);
+    private boolean addDateVisit(String username) {
+        return clientDAO.addDateVisit(username);
     }
 
     private boolean isLoginAlreadyExist(String login) {
@@ -338,5 +345,21 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     private boolean isMemberGroup(String username, int groupID) {
         return clientDAO.isMemberGroup(username, groupID);
+    }
+
+    @Override
+    public void addUsersToGroup(ClientHandler clientHandler, List<String> addUsers) {
+        int groupID = clientDAO.getGroupID(clientHandler.getGroupTitle());
+        for (String username : addUsers) {
+            int userID = clientDAO.getUserID(username);
+            clientDAO.insertUsersToGroups(userID, groupID);
+        }
+    }
+
+    @Override
+    public void removeRequestAddUserToGroup(ClientHandler clientHandler) {
+        if (clientDAO.deleteRequestAddUserToGroup(clientHandler.getGroupTitle()) == 0){
+            logger.info("Failed clear request add users to group");
+        }
     }
 }
