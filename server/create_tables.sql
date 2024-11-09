@@ -72,6 +72,8 @@ create table Request_add_group (
 
 --============================================================
 
+--alter table request_add_group 
+--drop column daterequest;
 
 
 

@@ -40,7 +40,12 @@ inner join "groups" g ON rag.groupid = g.id
 where rag.groupid = 1;
 -- id = полученному id запроса
 
+select utg.userid from users_to_groups utg;
 
+select username from users_to_groups utg 
+inner join users u on utg.userid = u.id 
+inner join "groups" g on utg.groupid = g.id 
+where g.title = 'gr1';
 
 
 select * from messages ;
@@ -48,6 +53,7 @@ insert into messages(id, userid, groupid, datemsg, msg) values(
 3, 1, 1, 'Mon Oct 13 15:21:15 MSK 2024', 'hello'
 );
 
+"gr1-asd: hello. time: Sat Nov 09 12:38:35 MSK 2024"
 
 
 --выбрать дату старше 1 часа interval '1 hour'

@@ -3,21 +3,20 @@ package ru.otus.java.safarov;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static ru.otus.java.safarov.ServerApplication.logger;
 
 public class Server {
     private final int port;
     private final Map<String, ClientHandler> clients;
+    private final Map<String, List<ClientHandler>> groups;
     private final AuthenticatedProvider authenticatedProvider;
 
     public Server(int port) {
         this.port = port;
         clients = new HashMap<>();
+        groups = new HashMap<>();
         authenticatedProvider = new AuthenticationProvider(this);
         authenticatedProvider.initialize();
     }
@@ -95,13 +94,28 @@ public class Server {
         }
     }
 
-    public synchronized void sendMessageGroup(ClientHandler clientHandler, String groupTitle, String msgToGroup) {
-//        if (clients.containsKey(recipient)) {
-//            clients.get(recipient).sendMessage(clientHandler.getName() + ": " + msgToPersonal + " time: " +
-//                    new Date());
-//        } else {
-//            clientHandler.sendMessage("Клиента с ником " + recipient + " нет в сети." +
-//                    " time: " + new Date());
-//        }
+    public synchronized void sendMessageGroup(ClientHandler clientHandler, String groupTitle,
+                                              String msgToGroup, List<String> users) {
+        String msg = groupTitle + "-" + clientHandler.getName() + ": " + msgToGroup + ". time: " + new Date();
+        for (ClientHandler user : groups.get(groupTitle)) {
+            users.remove(user.getName());
+            user.sendMessage(msg);
+        }
+        authenticatedProvider.addMsgToGroup(groupTitle, users, msg);
+
+    }
+
+    public synchronized void subscribeGroup(ClientHandler clientHandler) {
+        if(groups.containsKey(clientHandler.getGroupTitle())){
+            groups.get(clientHandler.getGroupTitle()).add(clientHandler);
+        } else {
+            groups.put(clientHandler.getGroupTitle(), new ArrayList<>(List.of(clientHandler)));
+        }
+    }
+
+    public synchronized void unsubscribeGroup(ClientHandler clientHandler) {
+        groups.get(clientHandler.getGroupTitle()).remove(clientHandler);
+        clientHandler.sendMessage("Вы вышли из группы " + clientHandler.getGroupTitle());
+        clientHandler.setGroupTitle("");
     }
 }

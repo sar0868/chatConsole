@@ -123,9 +123,9 @@ public class ClientDAO implements ClientService {
     public String getRole(String username) {
         String role = null;
         String USER_ROLE = "SELECT role from Roles r " +
-                "inner join Users_to_Roles utr on r.id = utr.roleID " +
-                "INNER JOIN Users u on utr.userID = u.id " +
-                "where u.username = ?";
+                           "inner join Users_to_Roles utr on r.id = utr.roleID " +
+                           "INNER JOIN Users u on utr.userID = u.id " +
+                           "where u.username = ?";
         try (PreparedStatement pst = connection.prepareStatement(USER_ROLE)) {
             pst.setString(1, username);
             try (ResultSet resultSet = pst.executeQuery()) {
@@ -432,8 +432,8 @@ public class ClientDAO implements ClientService {
     @Override
     public boolean isExistRequestAddGroup(String username, int groupID) {
         String stmt = "select rag.id from request_add_group rag " +
-                "inner join users u on rag.userid = u.id " +
-                "where username = ? and rag.groupid = ?";
+                      "inner join users u on rag.userid = u.id " +
+                      "where username = ? and rag.groupid = ?";
         int result = -1;
         try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setString(1, username);
@@ -469,14 +469,14 @@ public class ClientDAO implements ClientService {
     @Override
     public List<String> getUsernameSentRequest(String groupTitle) {
         String stmt = "select username from request_add_group rag " +
-                "inner join users u on rag.userid = u.id " +
-                "inner join groups g on rag.groupid  = g.id " +
-                " where title = ? ";
+                      "inner join users u on rag.userid = u.id " +
+                      "inner join groups g on rag.groupid  = g.id " +
+                      " where title = ? ";
         List<String> requestList = new ArrayList<>();
-        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setString(1, groupTitle);
-            try(ResultSet resultSet = pst.executeQuery()){
-                while (resultSet.next()){
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
                     String name = resultSet.getString(1);
                     requestList.add(name);
                 }
@@ -491,13 +491,50 @@ public class ClientDAO implements ClientService {
     public int deleteRequestAddUserToGroup(String groupTitle) {
         String stmt = "delete from request_add_group where groupid = (select id from groups where title = ?)";
         int result;
-        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setString(1, groupTitle);
             result = pst.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return result;
+    }
+
+    @Override
+    public List<String> getUsersToGroup(String groupTitle) {
+        String stmt = "select username from users_to_groups utg " +
+                      " inner join users u on utg.userid = u.id " +
+                      " inner join groups g on utg.groupid = g.id " +
+                      " where g.title = ?";
+        List<String> users = new ArrayList<>();
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, groupTitle);
+            try(ResultSet resultSet = pst.executeQuery()){
+                while (resultSet.next()){
+                    users.add(resultSet.getString(1));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
+
+    @Override
+    public void addMessageForUserToGroup(String groupTitle, String username, String msg) {
+        String stmt = "insert into messages(id, userid, groupid, msg) " +
+                      " values( ?, (select id from users where username = ?), " +
+                      " (select id from groups where title = ?), ?)";
+        int id = getMaxID("messages") + 1;
+        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setInt(1, id);
+            pst.setString(2, username);
+            pst.setString(3, groupTitle);
+            pst.setString(4, msg);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

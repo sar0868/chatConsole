@@ -16,6 +16,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     private final List<Group> groups;
     private ClientDAO clientDAO;
     private boolean inMemory;
+//    private Map<String, List<>>
 
     public AuthenticationProvider(Server server) {
         this.server = server;
@@ -75,7 +76,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     @Override
     public synchronized boolean registration(ClientHandler clientHandler, String login, String password, String username) {
         if (login.trim().length() < 3 || password.trim().length() < 6
-                || username.trim().length() < 2) {
+            || username.trim().length() < 2) {
             clientHandler.sendMessage("""
                     Логин должен быть 3 более символов,
                     длина пароля 6 и более символов,
@@ -105,7 +106,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return true;
     }
 
-    private boolean isUserNameAlreadyExist(String username) {
+    private synchronized boolean isUserNameAlreadyExist(String username) {
         if (inMemory) {
             for (User user : users) {
                 if (user.getUsername().equals(username)) {
@@ -118,7 +119,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
 
-    private boolean isLoginAlreadyExist(String login) {
+    private synchronized boolean isLoginAlreadyExist(String login) {
         if (inMemory) {
             for (User user : users) {
                 if (user.getLogin().equals(login)) {
@@ -130,7 +131,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.isLogin(login);
     }
 
-    private Role getRole(String username) {
+    private synchronized Role getRole(String username) {
         if (inMemory) {
             for (User user : users) {
                 if (user.getUsername().equals(username)) {
@@ -147,12 +148,12 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public boolean isAdmin(ClientHandler clientHandler) {
+    public synchronized boolean isAdmin(ClientHandler clientHandler) {
         return getRole(clientHandler.getName()) == Role.ADMIN;
     }
 
     @Override
-    public boolean changeUsername(ClientHandler clientHandler, String username) {
+    public synchronized boolean changeUsername(ClientHandler clientHandler, String username) {
         if (inMemory) {
             for (User user : users) {
                 if (user.getUsername().equals(clientHandler.getName())) {
@@ -165,7 +166,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public boolean addDepartment(ClientHandler clientHandler, String title, String login) {
+    public synchronized boolean addDepartment(ClientHandler clientHandler, String title, String login) {
         if (isTitleAlreadyExist(title)) {
             clientHandler.sendMessage("Указанный отдел уже существует.");
             return false;
@@ -188,7 +189,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return true;
     }
 
-    private boolean isTitleAlreadyExist(String title) {
+    private synchronized boolean isTitleAlreadyExist(String title) {
         if (inMemory) {
             for (Department department : departments) {
                 if (department.getTitle().equals(title)) {
@@ -201,7 +202,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public boolean addGroup(ClientHandler clientHandler, String title) {
+    public synchronized boolean addGroup(ClientHandler clientHandler, String title) {
         if (title.trim().length() < 2) {
             clientHandler.sendMessage(" Название группы должно быть более 2 символов");
             return false;
@@ -231,7 +232,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return true;
     }
 
-    private int nextIDGroup() {
+    private synchronized int nextIDGroup() {
         int id = 0;
         for (Group group : groups) {
             int el = group.getId();
@@ -242,7 +243,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return id + 1;
     }
 
-    private int isGroupAlreadyExist(String title) {
+    private synchronized int isGroupAlreadyExist(String title) {
         if (inMemory) {
             for (Group group : groups) {
                 if (group.getTitle().equals(title)) {
@@ -255,12 +256,12 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public Set<Department> getDepartments() {
+    public synchronized Set<Department> getDepartments() {
         return clientDAO.getDepartments();
     }
 
     @Override
-    public List<String> getGroupTitle(ClientHandler clientHandler) {
+    public synchronized List<String> getGroupTitle(ClientHandler clientHandler) {
         List<String> titleGroups = new ArrayList<>();
         if (inMemory) {
             for (Group group : groups) {
@@ -274,11 +275,10 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public boolean enterGroup(ClientHandler clientHandler, String groupTitle) {
+    public synchronized boolean enterGroup(ClientHandler clientHandler, String groupTitle) {
         //есть ли группа и является ли пользователем членом группы, если да, то вход
         //иначе сообщение "Вы не являетесь членом группы, можете отправить запрос на
         //добавление в группу /requestaddgroup <имя группы>"
-
         int groupID = isGroupAlreadyExist(groupTitle);
         if (groupID == -1) {
             clientHandler.sendMessage("Группы " + groupTitle + " не существует");
@@ -286,20 +286,27 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         if (!isMemberGroup(clientHandler.getName(), groupID)) {
             clientHandler.sendMessage("Вы не являетесь членом группы, можете отправить запрос на " +
-                    "добавление в группу /requestaddgroup <имя группы>");
+                                      "добавление в группу /requestaddgroup <имя группы>");
             return false;
         }
-//        clientHandler.sendMessage("Вы вошли в группу " + groupTitle);
+        clientHandler.setGroupTitle(groupTitle);
+        server.subscribeGroup(clientHandler);
+        clientHandler.sendMessage("Вы вошли в группу " + groupTitle);
         return true;
     }
 
     @Override
-    public boolean isManagerGroup(ClientHandler clientHandler) {
+    public synchronized List<String> getUsersToGroup(String groupTitle) {
+        return clientDAO.getUsersToGroup(groupTitle);
+    }
+
+    @Override
+    public synchronized boolean isManagerGroup(ClientHandler clientHandler) {
         return clientHandler.getName().equals(clientDAO.getUsernameManagerGroup(clientHandler.getGroupTitle()));
     }
 
     @Override
-    public boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle) {
+    public synchronized boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle) {
         // есть ли такая группа, не является ли пользователь уже членом группы, есть ли уже запрос на добавление
         // создать запрос (сделать все одним запросом или собирать данные)
         int groupID = isGroupAlreadyExist(groupTitle);
@@ -309,33 +316,33 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         }
         if (isMemberGroup(clientHandler.getName(), groupID)) {
             clientHandler.sendMessage("Вы уже являетесь членом группы " + groupTitle +
-                    ".\nДля входа в группу введите /enter " + groupTitle);
+                                      ".\nДля входа в группу введите /enter " + groupTitle);
             return false;
         }
         if (isExistRequest(clientHandler.getName(), groupID)) {
             clientHandler.sendMessage("Вы уже направляли запрос на добавление в группу " + groupTitle +
-                    ". Ваш запрос еще не рассмотрен.");
+                                      ". Ваш запрос еще не рассмотрен.");
             return false;
         }
         return clientDAO.addRequestAddGroup(clientHandler.getName(), groupID);
     }
 
     @Override
-    public List<String> getListRequest(ClientHandler clientHandler, String groupTitle) {
+    public synchronized List<String> getListRequest(ClientHandler clientHandler, String groupTitle) {
         return clientDAO.getUsernameSentRequest(groupTitle);
     }
 
-    private boolean isExistRequest(String username, int groupID) {
+    private synchronized boolean isExistRequest(String username, int groupID) {
         return clientDAO.isExistRequestAddGroup(username, groupID);
     }
 
 
-    private boolean isMemberGroup(String username, int groupID) {
+    private synchronized boolean isMemberGroup(String username, int groupID) {
         return clientDAO.isMemberGroup(username, groupID);
     }
 
     @Override
-    public void addUsersToGroup(ClientHandler clientHandler, List<String> addUsers) {
+    public synchronized void addUsersToGroup(ClientHandler clientHandler, List<String> addUsers) {
         int groupID = clientDAO.getGroupID(clientHandler.getGroupTitle());
         for (String username : addUsers) {
             int userID = clientDAO.getUserID(username);
@@ -344,9 +351,16 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public void removeRequestAddUserToGroup(ClientHandler clientHandler) {
-        if (clientDAO.deleteRequestAddUserToGroup(clientHandler.getGroupTitle()) == 0){
+    public synchronized void removeRequestAddUserToGroup(ClientHandler clientHandler) {
+        if (clientDAO.deleteRequestAddUserToGroup(clientHandler.getGroupTitle()) == 0) {
             logger.info("Failed clear request add users to group");
+        }
+    }
+
+    @Override
+    public synchronized void addMsgToGroup(String groupTitle, List<String> users, String msg) {
+        for (String user : users) {
+            clientDAO.addMessageForUserToGroup(groupTitle, user, msg);
         }
     }
 }

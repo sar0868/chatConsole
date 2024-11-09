@@ -49,5 +49,9 @@ public interface ClientService extends AutoCloseable{
 
     int deleteRequestAddUserToGroup(String groupTitle);
 
+    List<String> getUsersToGroup(String groupTitle);
+
+    void addMessageForUserToGroup(String groupTitle, String username, String msg);
+
 //    int getMaxGroupID();
 }

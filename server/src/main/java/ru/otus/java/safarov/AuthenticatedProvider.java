@@ -33,4 +33,8 @@ public interface AuthenticatedProvider {
     void addUsersToGroup(ClientHandler clientHandler, List<String> addUsers);
 
     void removeRequestAddUserToGroup(ClientHandler clientHandler);
+
+    List<String> getUsersToGroup(String groupTitle);
+
+    void addMsgToGroup(String groupTitle, List<String> users, String msg);
 }

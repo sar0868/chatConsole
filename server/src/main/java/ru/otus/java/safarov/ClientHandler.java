@@ -50,8 +50,8 @@ public class ClientHandler {
                         }
                     }
                     sendMessage("Отправка и получение сообщений доступна\n" +
-                            "только после аутентификации (команда: /auth login passowrd)\n" +
-                            "или после регистрации (команда: /register login password username)");
+                                "только после аутентификации (команда: /auth login passowrd)\n" +
+                                "или после регистрации (команда: /register login password username)");
                 }
                 // завершение аутентификации и регистрации
                 while (true) {
@@ -73,7 +73,7 @@ public class ClientHandler {
                                 String infoMsg = "Клиент " + oldName + " изменил username на " + getName();
                                 logger.info(infoMsg);
                                 sendMessage(infoMsg);
-                            } else{
+                            } else {
                                 String infoMsg = "Не удалось изменить имя клиента " + oldName;
                                 logger.info(infoMsg);
                             }
@@ -142,17 +142,18 @@ public class ClientHandler {
         } else {
             String msgToGroup = String.join(", ", Arrays.stream(array, 1, array.length)
                     .toArray(String[]::new));
-            server.sendMessageGroup(this, groupTitle, msgToGroup);
+            List<String> users = server.getAuthenticatedProvider().getUsersToGroup(groupTitle);
+            server.sendMessageGroup(this, groupTitle, msgToGroup, users);
         }
     }
 
     private void acceptReview(String msg) {
         //разобрать строку и добавить в группу и удалить из request все записи по этой группе
         String[] array = msg.trim().split(("\\s+"));
-        if(array.length > 1){
+        if (array.length > 1) {
             List<String> addUsers = new ArrayList<>();
             for (int i = 1; i < array.length; i++) {
-                if(requestsAddGroups.get(groupTitle).contains(array[i])){
+                if (requestsAddGroups.get(groupTitle).contains(array[i])) {
                     addUsers.add(array[i]);
                 }
             }
@@ -167,9 +168,7 @@ public class ClientHandler {
         if (groupTitle.isEmpty()) {
             sendMessage("Вы не входили ни в одну из групп");
         } else {
-            String yuoGroup = groupTitle;
-            groupTitle = "";
-            sendMessage("Вы вышли из группы " + yuoGroup);
+            server.unsubscribeGroup(this);
         }
     }
 
@@ -193,22 +192,18 @@ public class ClientHandler {
         if (array.length != 2) {
             sendMessage("Некорректный формат ввода команды /enter");
         } else {
-            if (groupTitle.isEmpty()) {
-                if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
-                    setGroup(array[1]);
-                    sendMessage("Вы вошли в группу " + groupTitle);
-                    reviewrequest();
-                }
-            } else if (groupTitle.equals(array[1])) {
+            if (groupTitle.equals(array[1])) {
                 sendMessage("Вы уже находитесь в группе " + groupTitle);
-            } else if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
-                leaveGroup();
-                setGroup(array[1]);
-                sendMessage("Вы вошли в группу " + groupTitle);
-                reviewrequest();
             } else {
-                logger.info("Пользователю {} не удалось сменить группу на {}", getName(), array[1]);
-                sendMessage("Не удалось сменить группу на " + array[1]);
+                if (!groupTitle.isEmpty()) {
+                    leaveGroup();
+                }
+                if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
+                    reviewrequest();
+                } else {
+                    logger.info("Пользователю {} не удалось сменить группу на {}", getName(), array[1]);
+                    sendMessage("Не удалось сменить группу на " + array[1]);
+                }
             }
         }
     }
@@ -218,8 +213,8 @@ public class ClientHandler {
         // /review <username1 username2 ...> клиент указывает кого добавить
         // остальные удаляются из запроса, если нет имен, то удаляются все.
 
-        if(server.getAuthenticatedProvider().isManagerGroup(this)){
-            List<String> usersSentRequest= server.getAuthenticatedProvider().getListRequest(this, groupTitle);
+        if (server.getAuthenticatedProvider().isManagerGroup(this)) {
+            List<String> usersSentRequest = server.getAuthenticatedProvider().getListRequest(this, groupTitle);
             requestsAddGroups.put(groupTitle, usersSentRequest);
             sendMessage("review: " + usersSentRequest);
         }
@@ -297,6 +292,7 @@ public class ClientHandler {
 
     protected void disconnect() {
         server.unsubscribe(this);
+        server.unsubscribeGroup(this);
         try {
             in.close();
         } catch (IOException e) {
@@ -328,6 +324,10 @@ public class ClientHandler {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setGroupTitle(String groupTitle) {
+        this.groupTitle = groupTitle;
     }
 
     protected void exit() {
