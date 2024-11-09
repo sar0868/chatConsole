@@ -538,6 +538,43 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
+    public List<String> getListMsgForGroup(String groupTitle, String username) {
+        List<String> messages = new ArrayList<>();
+        List<Integer> msgID = new ArrayList<>();
+        String stmt = "select m.id, msg from messages m " +
+                      " inner join users u on m.userid = u.id " +
+                      " inner join groups g on m.groupid = g.id " +
+                      " where u.username = ? and g.title = ? " +
+                      " order by m.id";
+        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, username);
+            pst.setString(2, groupTitle);
+            try(ResultSet resultSet = pst.executeQuery()){
+                while (resultSet.next()){
+                    msgID.add(resultSet.getInt(1));
+                    messages.add(resultSet.getString(2));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        for (int i : msgID) {
+            deleteMsgForUserToGroup(i);
+        }
+        return messages;
+    }
+
+    private void deleteMsgForUserToGroup(int id) {
+        String stmt = "delete from messages where id = ?";
+        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setInt(1, id);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void close() throws Exception {
         connection.close();
     }

@@ -363,4 +363,9 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             clientDAO.addMessageForUserToGroup(groupTitle, user, msg);
         }
     }
+
+    @Override
+    public synchronized List<String> getListMsgForGroup(ClientHandler clientHandler) {
+        return clientDAO.getListMsgForGroup(clientHandler.getGroupTitle(), clientHandler.getName());
+    }
 }

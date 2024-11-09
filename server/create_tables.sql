@@ -51,15 +51,15 @@ create table Users_to_Groups(
     foreign key (groupID) references Groups(id) on delete cascade
 );
 
-create table Messages(
-	id serial primary key,
-	userID smallint not null,
-	groupID smallint not null,
-	dateMSG timestamptz not null,
-	msg text not null,
-	foreign key (userID) references Users(id) on delete cascade,
-    foreign key (groupID) references Groups(id) on delete cascade
-);
+--create table Messages(
+--	id serial primary key,
+--	userID smallint not null,
+--	groupID smallint not null,
+--	dateMSG timestamptz not null,
+--	msg text not null,
+--	foreign key (userID) references Users(id) on delete cascade,
+--    foreign key (groupID) references Groups(id) on delete cascade
+--);
 
 
 create table Request_add_group (
@@ -72,11 +72,16 @@ create table Request_add_group (
 
 --============================================================
 
---alter table request_add_group 
---drop column daterequest;
+drop table messages;
 
-
-
+create table Messages(
+	id serial primary key,
+	userID smallint not null,
+	groupID smallint not null,
+	msg text not null,
+	foreign key (userID) references Users(id) on delete cascade,
+    foreign key (groupID) references Groups(id) on delete cascade
+);
 
 
 

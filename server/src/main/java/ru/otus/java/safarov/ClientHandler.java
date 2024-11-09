@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.otus.java.safarov.ServerApplication.logger;
 
@@ -199,6 +200,7 @@ public class ClientHandler {
                     leaveGroup();
                 }
                 if (server.getAuthenticatedProvider().enterGroup(this, array[1])) {
+                    getDeferredMessages();
                     reviewrequest();
                 } else {
                     logger.info("Пользователю {} не удалось сменить группу на {}", getName(), array[1]);
@@ -206,6 +208,12 @@ public class ClientHandler {
                 }
             }
         }
+    }
+
+    private void getDeferredMessages() {
+        List<String> messages = server.getAuthenticatedProvider().getListMsgForGroup(this);
+        String msg = messages.stream().collect(Collectors.joining("\n"));
+        sendMessage(msg);
     }
 
     private void reviewrequest() {
@@ -218,10 +226,6 @@ public class ClientHandler {
             requestsAddGroups.put(groupTitle, usersSentRequest);
             sendMessage("review: " + usersSentRequest);
         }
-    }
-
-    private void setGroup(String titleGroup) {
-        groupTitle = titleGroup;
     }
 
     public String getGroupTitle() {

@@ -49,11 +49,22 @@ where g.title = 'gr1';
 
 
 select * from messages ;
-insert into messages(id, userid, groupid, datemsg, msg) values(
-3, 1, 1, 'Mon Oct 13 15:21:15 MSK 2024', 'hello'
+insert into messages(id, userid, groupid, msg) values(
+3, 1, 1, 'gr1-asd: hello. time: Sat Nov 09 12:38:35 MSK 2024'
 );
 
-"gr1-asd: hello. time: Sat Nov 09 12:38:35 MSK 2024"
+insert into messages(id, userid, groupid, msg) values(
+1, (select id from users where username = 'qwe1'), (select id from "groups" where title = 'gr1'), 
+'gr1-asd: hello. time: Sat Nov 09 12:38:35 MSK 2024');
+
+select m.id, msg from messages m 
+inner join users u on m.userid = u.id
+inner join groups g on m.groupid = g.id 
+where u.username = 'qwe1' and g.title = 'gr1' 
+order by m.id;
+
+delete from messages where id in (2, 4);
+
 
 
 --выбрать дату старше 1 часа interval '1 hour'

@@ -37,4 +37,6 @@ public interface AuthenticatedProvider {
     List<String> getUsersToGroup(String groupTitle);
 
     void addMsgToGroup(String groupTitle, List<String> users, String msg);
+
+    List<String> getListMsgForGroup(ClientHandler clientHandler);
 }

@@ -53,5 +53,7 @@ public interface ClientService extends AutoCloseable{
 
     void addMessageForUserToGroup(String groupTitle, String username, String msg);
 
+    List<String> getListMsgForGroup(String groupTitle, String username);
+
 //    int getMaxGroupID();
 }
