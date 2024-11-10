@@ -70,22 +70,19 @@ public class ClientHandler {
                             String oldName = getName();
                             if (changeNick(msg)) {
                                 server.changeNick(this, oldName);
-                                String infoMsg = "Клиент " + oldName + " изменил username на " + getName();
+                                String infoMsg = "Клиент " + oldName + " изменил username на " + name;
                                 logger.info(infoMsg);
                                 sendMessage(infoMsg);
                             } else {
                                 String infoMsg = "Не удалось изменить имя клиента " + oldName;
                                 logger.info(infoMsg);
                             }
-//                        } else if (msg.startsWith("/department")) {
-//                            if (createDepartment(msg)) {
-//                                String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
-//                                logger.info(resultAddDepartment);
-//                                sendMessage(resultAddDepartment);
-//
-//                            }
-//                        } else if (msg.startsWith("/listdepartments")) {
-//                            getDepartments();
+                        } else if (msg.startsWith("/changepassword")) {
+                            if (changePassword(msg)) {
+                                sendMessage("Пароль успешно изменен");
+                            } else {
+                                logger.info("Не удалось сменить пароль для пользователя {}", name);
+                            }
                         } else if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
                                 server.shutdown();
@@ -114,6 +111,12 @@ public class ClientHandler {
                             groupMsg(msg);
                         } else if (msg.startsWith("/gkick ")) {
                             kickUserFromGroup(msg);
+                        } else if (msg.startsWith("/deluser")) {
+                            if (delUser(msg)) {
+                                sendMessage("Пользователь удален");
+                            } else {
+                                logger.info("Не удалось удалить пользователя");
+                            }
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -134,9 +137,45 @@ public class ClientHandler {
         }).start();
     }
 
+    private boolean delUser(String msg) {
+        String[] array = msg.trim().split("\\s+");
+        if (array.length > 2) {
+            sendMessage("Некорректный формат ввода команды /deluser");
+            return false;
+        }
+        String username;
+        if (array.length == 1) {
+            username = name;
+        } else if (!server.getAuthenticatedProvider().isAdmin(this)) {
+            sendMessage("Вы не являетесь администратором");
+            return false;
+        } else {
+            username = array[1];
+        }
+        if (server.getAuthenticatedProvider().deleteUser(username)) {
+            if (array.length == 1){
+                sendMessage("/exitok");
+                disconnect();
+            } else {
+                kickUser("/kick " + username);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean changePassword(String msg) {
+        String[] array = msg.trim().split("\\s+");
+        if (array.length != 2) {
+            sendMessage("Некорректный формат ввода команды /changepassword");
+            return false;
+        }
+        return server.getAuthenticatedProvider().changePassword(this, array[1]);
+    }
+
     private void kickUserFromGroup(String msg) {
         String[] array = msg.trim().split(("\\s+"));
-        if(array.length != 2){
+        if (array.length != 2) {
             sendMessage("Некорректный формат ввода /gkick");
         } else {
             server.getAuthenticatedProvider().kickUserFromGroup(this, array[1]);
@@ -255,31 +294,6 @@ public class ClientHandler {
         }
         return server.getAuthenticatedProvider().addGroup(this, array[1]);
     }
-
-//    private void getDepartments() {
-//        Set<Department> departments = server.getAuthenticatedProvider().getDepartments();
-//        StringBuilder msgDepartments = new StringBuilder("departments: ");
-//        for (Department department : departments) {
-//            msgDepartments.append(department.getTitle()).append(" ");
-//        }
-//        if (msgDepartments.toString().equals("departments: ")) {
-//            msgDepartments.append("empty");
-//        }
-//        sendMessage(msgDepartments.toString());
-//    }
-
-//    private boolean createDepartment(String msg) {
-//        String[] array = msg.trim().split("\\s+");
-//        if (array.length != 3) {
-//            sendMessage("Некорректный формат ввода команды /department");
-//            return false;
-//        }
-//        if (!server.getAuthenticatedProvider().isAdmin(this)) {
-//            sendMessage("Вы не являетесь администратором");
-//            return false;
-//        }
-//        return server.getAuthenticatedProvider().addDepartment(this, array[1], array[2]);
-//    }
 
     private boolean shutdownServer() {
         if (server.getAuthenticatedProvider().isAdmin(this)) {

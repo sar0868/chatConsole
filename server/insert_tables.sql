@@ -154,6 +154,9 @@ inner join users u on rag.userid = u.id
 inner join groups g on rag.groupid  = g.id 
 where title = 'gr1';
 
-
+UPDATE users SET "password" = 'new'
+where username = 'user1';
+delete from users where username = 'user';
+select * from users u ;
 
 

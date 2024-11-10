@@ -60,3 +60,51 @@ INFO  2024-11-10 15:19:27 [main] ru.otus.java.safarov.AuthenticationProvider (Au
 INFO  2024-11-10 15:19:27 [main] ru.otus.java.safarov.Server (Server.java:27) - Сервер запущен. Порт: 8189
 INFO  2024-11-10 15:19:34 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:40) - Клиент asd1 прошел аутентификацию.
 INFO  2024-11-10 15:19:50 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:40) - Клиент qwe1 прошел аутентификацию.
+INFO  2024-11-10 17:52:16 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 17:52:16 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 17:52:26 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент user прошел аутентификацию.
+INFO  2024-11-10 17:55:16 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 17:55:17 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 17:55:33 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент user прошел аутентификацию.
+INFO  2024-11-10 17:56:20 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 17:56:20 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 17:56:30 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент user прошел аутентификацию.
+INFO  2024-11-10 17:56:51 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:84) - Не удалось сменить пароль для пользователя user
+INFO  2024-11-10 17:57:40 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:84) - Не удалось сменить пароль для пользователя user
+INFO  2024-11-10 17:58:55 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:330) - Клиенту user отравлено сообщение о закрытии
+INFO  2024-11-10 18:43:51 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 18:43:51 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 18:44:07 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 18:44:07 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 18:44:44 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:46) - Клиент user зарегистрирован.
+INFO  2024-11-10 18:44:57 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:118) - Не удалось удалить пользователя
+INFO  2024-11-10 18:45:05 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:118) - Не удалось удалить пользователя
+INFO  2024-11-10 18:45:33 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 18:45:33 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 18:45:49 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:46) - Клиент user2 зарегистрирован.
+INFO  2024-11-10 18:46:23 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:46) - Клиент user2 зарегистрирован.
+INFO  2024-11-10 18:46:34 [Thread-2] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент admin прошел аутентификацию.
+INFO  2024-11-10 18:47:18 [Thread-2] ru.otus.java.safarov.ClientHandler (ClientHandler.java:118) - Не удалось удалить пользователя
+INFO  2024-11-10 18:48:15 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 18:48:15 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 18:48:36 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент admin прошел аутентификацию.
+INFO  2024-11-10 18:49:37 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:118) - Не удалось удалить пользователя
+INFO  2024-11-10 18:51:06 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:118) - Не удалось удалить пользователя
+INFO  2024-11-10 18:51:57 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 18:51:57 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 18:52:09 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:46) - Клиент user зарегистрирован.
+INFO  2024-11-10 18:52:26 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент admin прошел аутентификацию.
+INFO  2024-11-10 18:55:12 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 18:55:12 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 18:55:34 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:46) - Клиент user зарегистрирован.
+INFO  2024-11-10 18:55:45 [Thread-1] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент admin прошел аутентификацию.
+INFO  2024-11-10 18:56:00 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:132) - user отключился
+INFO  2024-11-10 18:56:50 [Thread-2] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент admin прошел аутентификацию.
+INFO  2024-11-10 18:57:07 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 18:57:07 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 18:57:16 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент admin прошел аутентификацию.
+INFO  2024-11-10 19:00:23 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 19:00:23 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 19:00:31 [main] ru.otus.java.safarov.AuthenticationProvider (AuthenticationProvider.java:37) - Сервис аутентификации запущен. DB режим
+INFO  2024-11-10 19:00:31 [main] ru.otus.java.safarov.Server (Server.java:26) - Сервер запущен. Порт: 8189
+INFO  2024-11-10 19:00:42 [Thread-0] ru.otus.java.safarov.ClientHandler (ClientHandler.java:39) - Клиент admin прошел аутентификацию.

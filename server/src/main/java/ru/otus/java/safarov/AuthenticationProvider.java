@@ -378,4 +378,18 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             server.unsubscribeUserFromGroup(clientHandler.getGroupTitle(), username);
         }
     }
+
+    @Override
+    public synchronized boolean changePassword(ClientHandler clientHandler, String password) {
+        if (password.trim().length() < 6) {
+            clientHandler.sendMessage("Длина пароля должна быть 6 и более символов");
+            return false;
+        }
+        return clientDAO.updatePassword(clientHandler.getName(), password);
+    }
+
+    @Override
+    public synchronized boolean deleteUser(String username) {
+        return clientDAO.deleteUser(username);
+    }
 }

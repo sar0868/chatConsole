@@ -114,9 +114,11 @@ public class Server {
     }
 
     public synchronized void unsubscribeGroup(ClientHandler clientHandler) {
-        groups.get(clientHandler.getGroupTitle()).remove(clientHandler);
-        clientHandler.sendMessage("Вы вышли из группы " + clientHandler.getGroupTitle());
-        clientHandler.setGroupTitle("");
+        if (!clientHandler.getGroupTitle().isEmpty()) {
+            groups.get(clientHandler.getGroupTitle()).remove(clientHandler);
+            clientHandler.sendMessage("Вы вышли из группы " + clientHandler.getGroupTitle());
+            clientHandler.setGroupTitle("");
+        }
     }
 
     public synchronized void unsubscribeUserFromGroup(String groupTitle, String username) {

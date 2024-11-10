@@ -40,4 +40,8 @@ public interface AuthenticatedProvider {
     List<String> getListMsgForGroup(ClientHandler clientHandler);
 
     void kickUserFromGroup(ClientHandler clientHandler, String username);
+
+    boolean changePassword(ClientHandler clientHandler, String password);
+
+    boolean deleteUser(String username);
 }

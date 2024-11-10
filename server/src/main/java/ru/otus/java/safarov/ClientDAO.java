@@ -393,22 +393,6 @@ public class ClientDAO implements ClientService {
         return result != 0;
     }
 
-//    private int getGroupID(String groupTitle) {
-//        int groupid = 0;
-//        String stmt = "select id from groups where title = ?";
-//        try (PreparedStatement pst = connection.prepareStatement(stmt)){
-//            pst.setString(1, groupTitle);
-//            try(ResultSet resultSet = pst.executeQuery()){
-//                while (resultSet.next()){
-//                    groupid = resultSet.getInt("id");
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return groupid;
-//    }
-
     @Override
     public boolean addRequestAddGroup(String username, int groupID) {
         String stmt = "insert into request_add_group (id, userid, groupid) values(?, ?, ?)";
@@ -586,6 +570,34 @@ public class ClientDAO implements ClientService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean updatePassword(String username, String password) {
+        int result;
+        String stmt = "UPDATE users SET password = ? " +
+                      "where username = ?";
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, password);
+            pst.setString(2, username);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result != 0;
+    }
+
+    @Override
+    public boolean deleteUser(String username) {
+        int result;
+        String stmt = "delete from users where username = ?";
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, username);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result != 0;
     }
 
     @Override
