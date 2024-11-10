@@ -67,7 +67,7 @@ public class Server {
     }
 
     public synchronized void sendList(ClientHandler clientHandler) {
-        clientHandler.sendMessage(Arrays.toString(clients.keySet().toArray()));
+        clientHandler.sendMessage("active users: " + String.join(" ", clients.keySet()));
     }
 
     public synchronized boolean isName(String name) {
@@ -117,5 +117,14 @@ public class Server {
         groups.get(clientHandler.getGroupTitle()).remove(clientHandler);
         clientHandler.sendMessage("Вы вышли из группы " + clientHandler.getGroupTitle());
         clientHandler.setGroupTitle("");
+    }
+
+    public synchronized void unsubscribeUserFromGroup(String groupTitle, String username) {
+        for (ClientHandler clientHandler : groups.get(groupTitle)) {
+            if(clientHandler.getName().equals(username)){
+                unsubscribeGroup(clientHandler);
+                break;
+            }
+        }
     }
 }

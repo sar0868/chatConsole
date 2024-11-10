@@ -20,20 +20,6 @@ create table Users_to_Roles(
 	foreign key (roleID) references Roles(id)
 );
 
-create table Department(
-    id serial primary key,
-    title varchar(100) not null unique,
-    managerID smallint not null,
-    foreign key (managerID) references Users(id) on delete cascade
-);
-
-create table Users_to_Departments(
-    userID smallint not null,
-    departmentID smallint not null,
-    primary key(userID, departmentID),
-    foreign key (userID) references Users(id) on delete cascade,
-    foreign key (departmentID) references Department(id) on delete cascade
-);
 
 create table Groups(
     id serial primary key,
@@ -51,16 +37,6 @@ create table Users_to_Groups(
     foreign key (groupID) references Groups(id) on delete cascade
 );
 
---create table Messages(
---	id serial primary key,
---	userID smallint not null,
---	groupID smallint not null,
---	dateMSG timestamptz not null,
---	msg text not null,
---	foreign key (userID) references Users(id) on delete cascade,
---    foreign key (groupID) references Groups(id) on delete cascade
---);
-
 
 create table Request_add_group (
 	id serial primary key,
@@ -70,10 +46,6 @@ create table Request_add_group (
     foreign key (groupID) references Groups(id) on delete cascade
 );
 
---============================================================
-
-drop table messages;
-
 create table Messages(
 	id serial primary key,
 	userID smallint not null,
@@ -82,6 +54,12 @@ create table Messages(
 	foreign key (userID) references Users(id) on delete cascade,
     foreign key (groupID) references Groups(id) on delete cascade
 );
+
+--============================================================
+
+
+
+
 
 
 

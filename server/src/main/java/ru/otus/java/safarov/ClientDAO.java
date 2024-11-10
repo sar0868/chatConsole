@@ -2,9 +2,7 @@ package ru.otus.java.safarov;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ClientDAO implements ClientService {
     //    private final String DATABASE_URL = "jdbc:sqlite:clients.db";
@@ -188,42 +186,42 @@ public class ClientDAO implements ClientService {
 
     }
 
-    @Override
-    public int addDepartment(Department department, String username) {
-        int result = -1;
-        String table = "department";
-        int departmentID = getMaxID(table) + 1;
-        int userID = getUserID(username);
-        try {
-            connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        String INSERT_DEPARTMENT = "INSERT INTO department (id, title, managerid) values(?, ?, ?)";
-        try (PreparedStatement pst = connection.prepareStatement(INSERT_DEPARTMENT)) {
-            pst.setInt(1, departmentID);
-            pst.setString(2, department.getTitle());
-            pst.setInt(3, userID);
-            result = pst.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if (result != -1 && insertUsersToDepartment(userID, departmentID) == -1) {
-            try {
-                connection.rollback();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            return -1;
-        }
-        try {
-            connection.commit();
-            connection.setAutoCommit(true);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
+//    @Override
+//    public int addDepartment(Department department, String username) {
+//        int result = -1;
+//        String table = "department";
+//        int departmentID = getMaxID(table) + 1;
+//        int userID = getUserID(username);
+//        try {
+//            connection.setAutoCommit(false);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        String INSERT_DEPARTMENT = "INSERT INTO department (id, title, managerid) values(?, ?, ?)";
+//        try (PreparedStatement pst = connection.prepareStatement(INSERT_DEPARTMENT)) {
+//            pst.setInt(1, departmentID);
+//            pst.setString(2, department.getTitle());
+//            pst.setInt(3, userID);
+//            result = pst.executeUpdate();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        if (result != -1 && insertUsersToDepartment(userID, departmentID) == -1) {
+//            try {
+//                connection.rollback();
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            return -1;
+//        }
+//        try {
+//            connection.commit();
+//            connection.setAutoCommit(true);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return result;
+//    }
 
 
     @Override
@@ -242,53 +240,53 @@ public class ClientDAO implements ClientService {
         }
     }
 
-    @Override
-    public int insertUsersToDepartment(int userId, int departmentID) {
-        int result = -1;
-        String INSERT_USERS_TO_DEPARTMENTS = "INSERT INTO users_to_departments (userID, departmentID) values(?, ?)";
-        try (PreparedStatement pst = connection.prepareStatement(INSERT_USERS_TO_DEPARTMENTS)) {
-            pst.setInt(1, userId);
-            pst.setInt(2, departmentID);
-            result = pst.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
+//    @Override
+//    public int insertUsersToDepartment(int userId, int departmentID) {
+//        int result = -1;
+//        String INSERT_USERS_TO_DEPARTMENTS = "INSERT INTO users_to_departments (userID, departmentID) values(?, ?)";
+//        try (PreparedStatement pst = connection.prepareStatement(INSERT_USERS_TO_DEPARTMENTS)) {
+//            pst.setInt(1, userId);
+//            pst.setInt(2, departmentID);
+//            result = pst.executeUpdate();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return result;
+//    }
 
-    @Override
-    public boolean isDepartment(String title) {
-        int id = -1;
-        String isTitle = "select id from department where title = ?";
-        try (PreparedStatement pst = connection.prepareStatement(isTitle)) {
-            pst.setString(1, title);
-            try (ResultSet resultSet = pst.executeQuery()) {
-                while (resultSet.next()) {
-                    id = resultSet.getInt("id");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return id != -1;
-    }
-
-    @Override
-    public Set<Department> getDepartments() {
-        Set<Department> departments = new HashSet<>();
-        try (Statement statement = connection.createStatement()) {
-            String GET_DEPARTMENTS = "SELECT title FROM department";
-            try (ResultSet resultSet = statement.executeQuery(GET_DEPARTMENTS)) {
-                while (resultSet.next()) {
-                    String title = resultSet.getString("title");
-                    departments.add(new Department(title));
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return departments;
-    }
+//    @Override
+//    public boolean isDepartment(String title) {
+//        int id = -1;
+//        String isTitle = "select id from department where title = ?";
+//        try (PreparedStatement pst = connection.prepareStatement(isTitle)) {
+//            pst.setString(1, title);
+//            try (ResultSet resultSet = pst.executeQuery()) {
+//                while (resultSet.next()) {
+//                    id = resultSet.getInt("id");
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return id != -1;
+//    }
+//
+//    @Override
+//    public Set<Department> getDepartments() {
+//        Set<Department> departments = new HashSet<>();
+//        try (Statement statement = connection.createStatement()) {
+//            String GET_DEPARTMENTS = "SELECT title FROM department";
+//            try (ResultSet resultSet = statement.executeQuery(GET_DEPARTMENTS)) {
+//                while (resultSet.next()) {
+//                    String title = resultSet.getString("title");
+//                    departments.add(new Department(title));
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return departments;
+//    }
 
     @Override
     public int getGroupID(String title) {
@@ -507,10 +505,10 @@ public class ClientDAO implements ClientService {
                       " inner join groups g on utg.groupid = g.id " +
                       " where g.title = ?";
         List<String> users = new ArrayList<>();
-        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setString(1, groupTitle);
-            try(ResultSet resultSet = pst.executeQuery()){
-                while (resultSet.next()){
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
                     users.add(resultSet.getString(1));
                 }
             }
@@ -526,7 +524,7 @@ public class ClientDAO implements ClientService {
                       " values( ?, (select id from users where username = ?), " +
                       " (select id from groups where title = ?), ?)";
         int id = getMaxID("messages") + 1;
-        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setInt(1, id);
             pst.setString(2, username);
             pst.setString(3, groupTitle);
@@ -546,11 +544,11 @@ public class ClientDAO implements ClientService {
                       " inner join groups g on m.groupid = g.id " +
                       " where u.username = ? and g.title = ? " +
                       " order by m.id";
-        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setString(1, username);
             pst.setString(2, groupTitle);
-            try(ResultSet resultSet = pst.executeQuery()){
-                while (resultSet.next()){
+            try (ResultSet resultSet = pst.executeQuery()) {
+                while (resultSet.next()) {
                     msgID.add(resultSet.getInt(1));
                     messages.add(resultSet.getString(2));
                 }
@@ -566,8 +564,24 @@ public class ClientDAO implements ClientService {
 
     private void deleteMsgForUserToGroup(int id) {
         String stmt = "delete from messages where id = ?";
-        try(PreparedStatement pst = connection.prepareStatement(stmt)){
+        try (PreparedStatement pst = connection.prepareStatement(stmt)) {
             pst.setInt(1, id);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void removeUserToGroup(String groupTitle, String username) {
+        String stmt = "delete from users_to_groups where userid = " +
+                      "(select userid from users_to_groups ug " +
+                      "inner join users u on ug.userid = u.id " +
+                      "inner join groups g on ug.groupid = g.id " +
+                      "where u.username = ? and g.title = ?)";
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, username);
+            pst.setString(2, groupTitle);
             pst.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

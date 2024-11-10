@@ -2,9 +2,7 @@ package ru.otus.java.safarov;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static ru.otus.java.safarov.ServerApplication.logger;
 
@@ -12,7 +10,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     private final Server server;
     private final List<User> users;
-    private final Set<Department> departments;
+//    private final Set<Department> departments;
     private final List<Group> groups;
     private ClientDAO clientDAO;
     private boolean inMemory;
@@ -21,7 +19,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     public AuthenticationProvider(Server server) {
         this.server = server;
         this.users = new ArrayList<>();
-        this.departments = new HashSet<>();
+//        this.departments = new HashSet<>();
         this.groups = new ArrayList<>();
         inMemory = true;
         this.users.add(new User("qwe", "qwe", "qwe1"));
@@ -165,41 +163,41 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.setUserName(clientHandler.getName(), username);
     }
 
-    @Override
-    public synchronized boolean addDepartment(ClientHandler clientHandler, String title, String login) {
-        if (isTitleAlreadyExist(title)) {
-            clientHandler.sendMessage("Указанный отдел уже существует.");
-            return false;
-        }
-        if (!isLoginAlreadyExist(login)) {
-            clientHandler.sendMessage("Нет пользователя с таким логином.");
-            return false;
-        }
-        if (inMemory) {
-            departments.add(new Department(title));
-            return true;
-        }
-        if (clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1) {
-            String msgError = title + " не создан.";
-            logger.info(msgError);
-            clientHandler.sendMessage(msgError);
-            return false;
-        }
-        clientHandler.sendMessage("/departmentok " + title);
-        return true;
-    }
+//    @Override
+//    public synchronized boolean addDepartment(ClientHandler clientHandler, String title, String login) {
+//        if (isTitleAlreadyExist(title)) {
+//            clientHandler.sendMessage("Указанный отдел уже существует.");
+//            return false;
+//        }
+//        if (!isLoginAlreadyExist(login)) {
+//            clientHandler.sendMessage("Нет пользователя с таким логином.");
+//            return false;
+//        }
+//        if (inMemory) {
+//            departments.add(new Department(title));
+//            return true;
+//        }
+//        if (clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1) {
+//            String msgError = title + " не создан.";
+//            logger.info(msgError);
+//            clientHandler.sendMessage(msgError);
+//            return false;
+//        }
+//        clientHandler.sendMessage("/departmentok " + title);
+//        return true;
+//    }
 
-    private synchronized boolean isTitleAlreadyExist(String title) {
-        if (inMemory) {
-            for (Department department : departments) {
-                if (department.getTitle().equals(title)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return clientDAO.isDepartment(title);
-    }
+//    private synchronized boolean isTitleAlreadyExist(String title) {
+//        if (inMemory) {
+//            for (Department department : departments) {
+//                if (department.getTitle().equals(title)) {
+//                    return true;
+//                }
+//            }
+//            return false;
+//        }
+//        return clientDAO.isDepartment(title);
+//    }
 
     @Override
     public synchronized boolean addGroup(ClientHandler clientHandler, String title) {
@@ -255,10 +253,10 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.getGroupID(title);
     }
 
-    @Override
-    public synchronized Set<Department> getDepartments() {
-        return clientDAO.getDepartments();
-    }
+//    @Override
+//    public synchronized Set<Department> getDepartments() {
+//        return clientDAO.getDepartments();
+//    }
 
     @Override
     public synchronized List<String> getGroupTitle(ClientHandler clientHandler) {
@@ -367,5 +365,17 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     @Override
     public synchronized List<String> getListMsgForGroup(ClientHandler clientHandler) {
         return clientDAO.getListMsgForGroup(clientHandler.getGroupTitle(), clientHandler.getName());
+    }
+
+    @Override
+    public synchronized void kickUserFromGroup(ClientHandler clientHandler, String username) {
+        if(!isManagerGroup(clientHandler)){
+            clientHandler.sendMessage("Вы не являетесь владельцем группы.");
+        } else if (!getUsersToGroup(clientHandler.getGroupTitle()).contains(username)){
+            clientHandler.sendMessage(username + " не являетесь членом группы.");
+        } else {
+            clientDAO.removeUserToGroup(clientHandler.getGroupTitle(), username);
+            server.unsubscribeUserFromGroup(clientHandler.getGroupTitle(), username);
+        }
     }
 }

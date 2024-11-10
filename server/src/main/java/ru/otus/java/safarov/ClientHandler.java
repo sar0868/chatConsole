@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.otus.java.safarov.ServerApplication.logger;
 
@@ -16,7 +15,7 @@ public class ClientHandler {
     private final DataOutputStream out;
     private String name;
     private String groupTitle;
-    private Map<String, List<String>> requestsAddGroups;
+    private final Map<String, List<String>> requestsAddGroups;
 
     public ClientHandler(Server server, Socket socket) throws IOException {
         this.server = server;
@@ -78,19 +77,18 @@ public class ClientHandler {
                                 String infoMsg = "Не удалось изменить имя клиента " + oldName;
                                 logger.info(infoMsg);
                             }
-                        } else if (msg.startsWith("/department")) {
-                            if (createDepartment(msg)) {
-                                String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
-                                logger.info(resultAddDepartment);
-                                sendMessage(resultAddDepartment);
-
-                            }
-                        } else if (msg.startsWith("/listdepartments")) {
-                            getDepartments();
+//                        } else if (msg.startsWith("/department")) {
+//                            if (createDepartment(msg)) {
+//                                String resultAddDepartment = "Отдел " + msg.trim().split("\\s+")[1] + " создан";
+//                                logger.info(resultAddDepartment);
+//                                sendMessage(resultAddDepartment);
+//
+//                            }
+//                        } else if (msg.startsWith("/listdepartments")) {
+//                            getDepartments();
                         } else if (msg.startsWith("/shutdown")) {
                             if (shutdownServer()) {
                                 server.shutdown();
-
                                 disconnect();
                                 System.exit(0);
                             }
@@ -114,6 +112,8 @@ public class ClientHandler {
                             acceptReview(msg);
                         } else if (msg.startsWith("/wg ")) {
                             groupMsg(msg);
+                        } else if (msg.startsWith("/gkick ")) {
+                            kickUserFromGroup(msg);
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -132,6 +132,15 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private void kickUserFromGroup(String msg) {
+        String[] array = msg.trim().split(("\\s+"));
+        if(array.length != 2){
+            sendMessage("Некорректный формат ввода /gkick");
+        } else {
+            server.getAuthenticatedProvider().kickUserFromGroup(this, array[1]);
+        }
     }
 
     private void groupMsg(String msg) {
@@ -212,7 +221,7 @@ public class ClientHandler {
 
     private void getDeferredMessages() {
         List<String> messages = server.getAuthenticatedProvider().getListMsgForGroup(this);
-        String msg = messages.stream().collect(Collectors.joining("\n"));
+        String msg = String.join("\n", messages);
         sendMessage(msg);
     }
 
@@ -224,7 +233,7 @@ public class ClientHandler {
         if (server.getAuthenticatedProvider().isManagerGroup(this)) {
             List<String> usersSentRequest = server.getAuthenticatedProvider().getListRequest(this, groupTitle);
             requestsAddGroups.put(groupTitle, usersSentRequest);
-            sendMessage("review: " + usersSentRequest);
+            sendMessage("review: " + String.join(" ", usersSentRequest));
         }
     }
 
@@ -234,7 +243,7 @@ public class ClientHandler {
 
     private void getTitlesGroups() {
         List<String> titles = server.getAuthenticatedProvider().getGroupTitle(this);
-        sendMessage("list groups: " + titles);
+        sendMessage("list groups: " + String.join(" ", titles));
     }
 
     private boolean createGroup(String msg) {
@@ -247,30 +256,30 @@ public class ClientHandler {
         return server.getAuthenticatedProvider().addGroup(this, array[1]);
     }
 
-    private void getDepartments() {
-        Set<Department> departments = server.getAuthenticatedProvider().getDepartments();
-        StringBuilder msgDepartments = new StringBuilder("departments: ");
-        for (Department department : departments) {
-            msgDepartments.append(department.getTitle()).append(" ");
-        }
-        if (msgDepartments.toString().equals("departments: ")) {
-            msgDepartments.append("empty");
-        }
-        sendMessage(msgDepartments.toString());
-    }
+//    private void getDepartments() {
+//        Set<Department> departments = server.getAuthenticatedProvider().getDepartments();
+//        StringBuilder msgDepartments = new StringBuilder("departments: ");
+//        for (Department department : departments) {
+//            msgDepartments.append(department.getTitle()).append(" ");
+//        }
+//        if (msgDepartments.toString().equals("departments: ")) {
+//            msgDepartments.append("empty");
+//        }
+//        sendMessage(msgDepartments.toString());
+//    }
 
-    private boolean createDepartment(String msg) {
-        String[] array = msg.trim().split("\\s+");
-        if (array.length != 3) {
-            sendMessage("Некорректный формат ввода команды /department");
-            return false;
-        }
-        if (!server.getAuthenticatedProvider().isAdmin(this)) {
-            sendMessage("Вы не являетесь администратором");
-            return false;
-        }
-        return server.getAuthenticatedProvider().addDepartment(this, array[1], array[2]);
-    }
+//    private boolean createDepartment(String msg) {
+//        String[] array = msg.trim().split("\\s+");
+//        if (array.length != 3) {
+//            sendMessage("Некорректный формат ввода команды /department");
+//            return false;
+//        }
+//        if (!server.getAuthenticatedProvider().isAdmin(this)) {
+//            sendMessage("Вы не являетесь администратором");
+//            return false;
+//        }
+//        return server.getAuthenticatedProvider().addDepartment(this, array[1], array[2]);
+//    }
 
     private boolean shutdownServer() {
         if (server.getAuthenticatedProvider().isAdmin(this)) {

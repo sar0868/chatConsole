@@ -65,7 +65,11 @@ order by m.id;
 
 delete from messages where id in (2, 4);
 
-
+delete from users_to_groups where userid = 
+(select userid from users_to_groups ug 
+inner join users u on ug.userid = u.id
+inner join "groups" g on ug.groupid = g.id
+where u.username = 'admin' and g.title = 'gr1');
 
 --выбрать дату старше 1 часа interval '1 hour'
 -- 2 недели - interval '14 day'

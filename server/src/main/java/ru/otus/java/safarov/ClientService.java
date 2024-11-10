@@ -2,7 +2,6 @@ package ru.otus.java.safarov;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 
 public interface ClientService extends AutoCloseable{
     List<User> getAll();
@@ -19,15 +18,15 @@ public interface ClientService extends AutoCloseable{
 
     int getUserID(String username);
 
-    int addDepartment(Department department, String username);
+//    int addDepartment(Department department, String username);
 
     int getMaxID(String table);
 
-    int insertUsersToDepartment(int userId, int departmentID);
+//    int insertUsersToDepartment(int userId, int departmentID);
 
-    boolean isDepartment(String title);
-
-    Set<Department> getDepartments();
+//    boolean isDepartment(String title);
+//
+//    Set<Department> getDepartments();
 
     int getGroupID(String title);
 
@@ -54,6 +53,8 @@ public interface ClientService extends AutoCloseable{
     void addMessageForUserToGroup(String groupTitle, String username, String msg);
 
     List<String> getListMsgForGroup(String groupTitle, String username);
+
+    void removeUserToGroup(String groupTitle, String username);
 
 //    int getMaxGroupID();
 }

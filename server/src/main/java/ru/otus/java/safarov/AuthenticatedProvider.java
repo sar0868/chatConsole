@@ -1,7 +1,6 @@
 package ru.otus.java.safarov;
 
 import java.util.List;
-import java.util.Set;
 
 public interface AuthenticatedProvider {
     void initialize();
@@ -14,9 +13,9 @@ public interface AuthenticatedProvider {
 
     boolean changeUsername(ClientHandler clientHandler, String username);
 
-    boolean addDepartment(ClientHandler clientHandler, String title, String login);
+//    boolean addDepartment(ClientHandler clientHandler, String title, String login);
 
-    Set<Department> getDepartments();
+//    Set<Department> getDepartments();
 
     boolean addGroup(ClientHandler clientHandler, String title);
 
@@ -39,4 +38,6 @@ public interface AuthenticatedProvider {
     void addMsgToGroup(String groupTitle, List<String> users, String msg);
 
     List<String> getListMsgForGroup(ClientHandler clientHandler);
+
+    void kickUserFromGroup(ClientHandler clientHandler, String username);
 }
