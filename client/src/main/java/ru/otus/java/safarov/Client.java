@@ -31,13 +31,11 @@ public class Client {
                         if (msg.startsWith("/authok")) {
                             System.out.println("Вы прошли аутентификацию. Имя пользователя "
                                     + msg.split(" ")[1]);
-
                         }
                         if (msg.startsWith("/regok")) {
                             System.out.println("Вы зарегистрировались. Имя пользователя "
                                     + msg.split(" ")[1]);
                         }
-
                     } else {
                         System.out.println(msg);
                     }
@@ -61,7 +59,6 @@ public class Client {
         }
     }
 
-
     private void disconnect() {
         try {
             in.close();
@@ -80,5 +77,4 @@ public class Client {
         }
         System.exit(1);
     }
-
 }

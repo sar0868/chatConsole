@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientDAO implements ClientService {
-    //    private final String DATABASE_URL = "jdbc:sqlite:clients.db";
     private final String DATABASE_URL = "jdbc:postgresql://localhost:5432/chat";
     private final Connection connection;
 
     public ClientDAO() throws SQLException {
-//        connection = DriverManager.getConnection(DATABASE_URL);
         connection = DriverManager.getConnection(DATABASE_URL, "username", "passwd");
 
     }
