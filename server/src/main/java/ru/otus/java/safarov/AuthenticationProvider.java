@@ -1,7 +1,6 @@
 package ru.otus.java.safarov;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static ru.otus.java.safarov.ServerApplication.logger;
@@ -9,25 +8,10 @@ import static ru.otus.java.safarov.ServerApplication.logger;
 public class AuthenticationProvider implements AuthenticatedProvider {
 
     private final Server server;
-    private final List<User> users;
-//    private final Set<Department> departments;
-    private final List<Group> groups;
     private ClientDAO clientDAO;
-    private boolean inMemory;
-//    private Map<String, List<>>
 
     public AuthenticationProvider(Server server) {
         this.server = server;
-        this.users = new ArrayList<>();
-//        this.departments = new HashSet<>();
-        this.groups = new ArrayList<>();
-        inMemory = true;
-        this.users.add(new User("qwe", "qwe", "qwe1"));
-        this.users.add(new User("asd", "asd", "asd1"));
-        User admin = new User("admin", "admin", "admin");
-        //        admin.setRole(Role.ADMIN);
-        this.users.add(admin);
-
     }
 
     @Override
@@ -35,21 +19,12 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         try {
             clientDAO = new ClientDAO();
             logger.info("Сервис аутентификации запущен. DB режим");
-            inMemory = false;
         } catch (SQLException e) {
-            logger.info("Сервис аутентификации запущен. In memory режим");
+            logger.info("Нет соединения с базой данных");
         }
     }
 
     private synchronized String getUserNameByLoginAndPassword(String login, String password) {
-        if (inMemory) {
-            for (User user : users) {
-                if (user.getLogin().equals(login) && user.getPassword().equals(password)) {
-                    return user.getUsername();
-                }
-            }
-            return null;
-        }
         return clientDAO.getUsername(login, password);
     }
 
@@ -89,10 +64,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             clientHandler.sendMessage("Указанное имя пользователя уже занято.");
             return false;
         }
-        if (inMemory) {
-            users.add(new User(login, password, username));
-        }
-        if (!inMemory && clientDAO.addUser(clientDAO.getAll().size() + 1, new User(login, password, username)) == -1) {
+        if (clientDAO.addUser(clientDAO.getAll().size() + 1, new User(login, password, username)) == -1) {
             String msgError = username + " не зарегистрирован.";
             logger.info(msgError);
             clientHandler.sendMessage(msgError);
@@ -105,40 +77,15 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     private synchronized boolean isUserNameAlreadyExist(String username) {
-        if (inMemory) {
-            for (User user : users) {
-                if (user.getUsername().equals(username)) {
-                    return true;
-                }
-            }
-            return false;
-        }
         return clientDAO.isUserName(username);
     }
 
 
     private synchronized boolean isLoginAlreadyExist(String login) {
-        if (inMemory) {
-            for (User user : users) {
-                if (user.getLogin().equals(login)) {
-                    return true;
-                }
-            }
-            return false;
-        }
         return clientDAO.isLogin(login);
     }
 
     private synchronized Role getRole(String username) {
-        if (inMemory) {
-            for (User user : users) {
-                if (user.getUsername().equals(username)) {
-                    return user.getRole();
-                }
-            }
-            return null;
-        }
-
         if (clientDAO.getRole(username).equals("ADMIN")) {
             return Role.ADMIN;
         }
@@ -152,14 +99,6 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public synchronized boolean changeUsername(ClientHandler clientHandler, String username) {
-        if (inMemory) {
-            for (User user : users) {
-                if (user.getUsername().equals(clientHandler.getName())) {
-                    user.setUsername(username);
-                    return true;
-                }
-            }
-        }
         return clientDAO.setUserName(clientHandler.getName(), username);
     }
 
@@ -173,17 +112,6 @@ public class AuthenticationProvider implements AuthenticatedProvider {
             clientHandler.sendMessage("Указанная группа уже существует.");
             return false;
         }
-
-        if (inMemory) {
-            for (Group group : groups) {
-                if (group.getTitle().equals(title)) {
-                    clientHandler.sendMessage("Указанная группа уже существует.");
-                    return false;
-                }
-            }
-            groups.add(new Group(nextIDGroup(), title));
-            return true;
-        }
         if (clientDAO.addGroup(title, clientHandler.getName()) == -1) {
             String msgError = title + " не создан.";
             logger.info(msgError);
@@ -194,41 +122,13 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return true;
     }
 
-    private synchronized int nextIDGroup() {
-        int id = 0;
-        for (Group group : groups) {
-            int el = group.getId();
-            if (id > el) {
-                id = el;
-            }
-        }
-        return id + 1;
-    }
-
     private synchronized int isGroupAlreadyExist(String title) {
-        if (inMemory) {
-            for (Group group : groups) {
-                if (group.getTitle().equals(title)) {
-                    return 1;
-                }
-            }
-            return -1;
-        }
         return clientDAO.getGroupID(title);
     }
 
     @Override
     public synchronized List<String> getGroupTitle(ClientHandler clientHandler) {
-        List<String> titleGroups = new ArrayList<>();
-        if (inMemory) {
-            for (Group group : groups) {
-                titleGroups.add(group.getTitle());
-            }
-        } else {
-            titleGroups = clientDAO.getGroupTitle();
-
-        }
-        return titleGroups;
+        return clientDAO.getGroupTitle();
     }
 
     @Override

@@ -5,7 +5,9 @@ import java.util.List;
 
 public interface ClientService extends AutoCloseable{
     List<User> getAll();
+
     String getUsername(String login, String password);
+
     int addUser(int id, User user) throws SQLException;
 
     boolean isLogin(String login);
@@ -18,15 +20,7 @@ public interface ClientService extends AutoCloseable{
 
     int getUserID(String username);
 
-//    int addDepartment(Department department, String username);
-
     int getMaxID(String table);
-
-//    int insertUsersToDepartment(int userId, int departmentID);
-
-//    boolean isDepartment(String title);
-//
-//    Set<Department> getDepartments();
 
     int getGroupID(String title);
 
@@ -61,6 +55,4 @@ public interface ClientService extends AutoCloseable{
     boolean deleteUser(String username);
 
     boolean deleteGroup(String groupTitle);
-
-//    int getMaxGroupID();
 }

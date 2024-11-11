@@ -13,10 +13,6 @@ public interface AuthenticatedProvider {
 
     boolean changeUsername(ClientHandler clientHandler, String username);
 
-//    boolean addDepartment(ClientHandler clientHandler, String title, String login);
-
-//    Set<Department> getDepartments();
-
     boolean addGroup(ClientHandler clientHandler, String title);
 
     List<String> getGroupTitle(ClientHandler clientHandler);

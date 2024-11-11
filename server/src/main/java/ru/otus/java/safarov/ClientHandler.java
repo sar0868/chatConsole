@@ -26,7 +26,6 @@ public class ClientHandler {
         this.groupTitle = "";
         new Thread(() -> {
             try {
-                // цикл аутентификации и регистрации
                 while (true) {
                     String msg = in.readUTF();
                     if (msg.startsWith("/")) {
@@ -48,12 +47,15 @@ public class ClientHandler {
                             }
                             continue;
                         }
+                        if (msg.startsWith("/help")) {
+                            sendHelp();
+                            continue;
+                        }
                     }
                     sendMessage("Отправка и получение сообщений доступна\n" +
                             "только после аутентификации (команда: /auth login passowrd)\n" +
                             "или после регистрации (команда: /register login password username)");
                 }
-                // завершение аутентификации и регистрации
                 while (true) {
                     String msg = in.readUTF();
                     if (msg.startsWith("/")) {
@@ -123,6 +125,8 @@ public class ClientHandler {
                             } else {
                                 logger.info("Не удалось удалить группу");
                             }
+                        } else if (msg.startsWith("/help")) {
+                            sendHelp();
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -141,6 +145,26 @@ public class ClientHandler {
                 disconnect();
             }
         }).start();
+    }
+
+    private void sendHelp() {
+        String msg = "- /register – регистрация \n" +
+                "- /auth – аутентификация \n" +
+                "- /w – личное сообщение \n" +
+                "- /exit – выход \n" +
+                "- /activelist – список активных клиентов \n" +
+                "- /changenick – смена имени пользователя \n" +
+                "- /wg - сообщение группе \n" +
+                "- /requestaddgroup (группа) - запрос на добавление в группу \n" +
+                "- /review (пользователь)- добавление менеджером в группу \n" +
+                "- /groupslist - получить список групп \n" +
+                "- /leavegroup - выйти из группы \n" +
+                "- /enter (имя группы) - войти в группу \n" +
+                "- /gkick (пользователь) - менеджер группы удаляет пользователя из группы \n" +
+                "- /changepassword (новый пароль) - изменение пароля для пользователя +\n" +
+                "- /deluser - удаление пользователя \n" +
+                "- /delgroup (имя группы) - удаление группы";
+        sendMessage(msg);
     }
 
     private boolean delGroup(String msg) {
@@ -203,7 +227,6 @@ public class ClientHandler {
     }
 
     private void groupMsg(String msg) {
-//        /wg message
         msg = msg.trim().replaceAll("\\s+", " ");
         String[] array = msg.split(" ");
         if (array.length < 2) {
@@ -217,7 +240,6 @@ public class ClientHandler {
     }
 
     private void acceptReview(String msg) {
-        //разобрать строку и добавить в группу и удалить из request все записи по этой группе
         String[] array = msg.trim().split(("\\s+"));
         if (array.length > 1) {
             List<String> addUsers = new ArrayList<>();
@@ -242,7 +264,6 @@ public class ClientHandler {
     }
 
     private void requestAddGroup(String msg) {
-        // /addgroup <имя группы>
         String[] array = msg.trim().split(("\\s+"));
         if (array.length != 2) {
             sendMessage("Некорректный формат ввода команды /addgroup");
@@ -304,7 +325,6 @@ public class ClientHandler {
     }
 
     private boolean createGroup(String msg) {
-//        /group <title> <password>
         String[] array = msg.trim().split("\\s+");
         if (array.length != 2) {
             sendMessage("Некорректный формат ввода команды /group");
