@@ -60,5 +60,7 @@ public interface ClientService extends AutoCloseable{
 
     boolean deleteUser(String username);
 
+    boolean deleteGroup(String groupTitle);
+
 //    int getMaxGroupID();
 }

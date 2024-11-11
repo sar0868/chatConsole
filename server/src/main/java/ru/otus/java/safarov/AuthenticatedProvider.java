@@ -25,7 +25,7 @@ public interface AuthenticatedProvider {
 
     boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle);
 
-    boolean isManagerGroup(ClientHandler clientHandler);
+    boolean isManagerGroup(ClientHandler clientHandler, String groupTitle);
 
     List<String> getListRequest(ClientHandler clientHandler, String groupTitle);
 
@@ -44,4 +44,6 @@ public interface AuthenticatedProvider {
     boolean changePassword(ClientHandler clientHandler, String password);
 
     boolean deleteUser(String username);
+
+    boolean delGroup(String groupTitle);
 }

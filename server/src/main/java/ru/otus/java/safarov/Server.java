@@ -129,4 +129,13 @@ public class Server {
             }
         }
     }
+
+    public synchronized void delGroup(String groupTitle) {
+        if (groups.containsKey(groupTitle)){
+            for (ClientHandler clientHandler : groups.get(groupTitle)) {
+                clientHandler.leaveGroup();
+            }
+            groups.remove(groupTitle);
+        }
+    }
 }

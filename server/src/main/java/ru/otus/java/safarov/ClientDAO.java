@@ -601,6 +601,19 @@ public class ClientDAO implements ClientService {
     }
 
     @Override
+    public boolean deleteGroup(String groupTitle) {
+        int result;
+        String stmt = "delete from groups where title = ?";
+        try (PreparedStatement pst = connection.prepareStatement(stmt)){
+            pst.setString(1, groupTitle);
+            result = pst.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result != 0;
+    }
+
+    @Override
     public void close() throws Exception {
         connection.close();
     }

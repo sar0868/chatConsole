@@ -50,8 +50,8 @@ public class ClientHandler {
                         }
                     }
                     sendMessage("Отправка и получение сообщений доступна\n" +
-                                "только после аутентификации (команда: /auth login passowrd)\n" +
-                                "или после регистрации (команда: /register login password username)");
+                            "только после аутентификации (команда: /auth login passowrd)\n" +
+                            "или после регистрации (команда: /register login password username)");
                 }
                 // завершение аутентификации и регистрации
                 while (true) {
@@ -117,6 +117,12 @@ public class ClientHandler {
                             } else {
                                 logger.info("Не удалось удалить пользователя");
                             }
+                        } else if (msg.startsWith("/delgroup")) {
+                            if (delGroup(msg)) {
+                                sendMessage("Группа удалена");
+                            } else {
+                                logger.info("Не удалось удалить группу");
+                            }
                         } else {
                             sendMessage("Не корректный ввод: " + msg);
                         }
@@ -137,6 +143,20 @@ public class ClientHandler {
         }).start();
     }
 
+    private boolean delGroup(String msg) {
+        String[] array = msg.trim().split("\\s+");
+        if (array.length != 2) {
+            sendMessage("Некорректный формат ввода команды /delgroup");
+            return false;
+        }
+        if (server.getAuthenticatedProvider().isAdmin(this) ||
+                server.getAuthenticatedProvider().isManagerGroup(this, array[1])) {
+            return server.getAuthenticatedProvider().delGroup(array[1]);
+        }
+        sendMessage("Вы не являетесь администратором или создателем группы");
+        return false;
+    }
+
     private boolean delUser(String msg) {
         String[] array = msg.trim().split("\\s+");
         if (array.length > 2) {
@@ -153,7 +173,7 @@ public class ClientHandler {
             username = array[1];
         }
         if (server.getAuthenticatedProvider().deleteUser(username)) {
-            if (array.length == 1){
+            if (array.length == 1) {
                 sendMessage("/exitok");
                 disconnect();
             } else {
@@ -213,7 +233,7 @@ public class ClientHandler {
 
     }
 
-    private void leaveGroup() {
+    public void leaveGroup() {
         if (groupTitle.isEmpty()) {
             sendMessage("Вы не входили ни в одну из групп");
         } else {
@@ -265,14 +285,12 @@ public class ClientHandler {
     }
 
     private void reviewrequest() {
-        //отправить клиенту список имен
-        // /review <username1 username2 ...> клиент указывает кого добавить
-        // остальные удаляются из запроса, если нет имен, то удаляются все.
-
-        if (server.getAuthenticatedProvider().isManagerGroup(this)) {
+        if (server.getAuthenticatedProvider().isManagerGroup(this, groupTitle)) {
             List<String> usersSentRequest = server.getAuthenticatedProvider().getListRequest(this, groupTitle);
             requestsAddGroups.put(groupTitle, usersSentRequest);
-            sendMessage("review: " + String.join(" ", usersSentRequest));
+            if (!usersSentRequest.isEmpty()) {
+                sendMessage("review: " + String.join(" ", usersSentRequest));
+            }
         }
     }
 

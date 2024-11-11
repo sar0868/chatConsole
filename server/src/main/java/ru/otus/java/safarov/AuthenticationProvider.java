@@ -163,42 +163,6 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.setUserName(clientHandler.getName(), username);
     }
 
-//    @Override
-//    public synchronized boolean addDepartment(ClientHandler clientHandler, String title, String login) {
-//        if (isTitleAlreadyExist(title)) {
-//            clientHandler.sendMessage("Указанный отдел уже существует.");
-//            return false;
-//        }
-//        if (!isLoginAlreadyExist(login)) {
-//            clientHandler.sendMessage("Нет пользователя с таким логином.");
-//            return false;
-//        }
-//        if (inMemory) {
-//            departments.add(new Department(title));
-//            return true;
-//        }
-//        if (clientDAO.addDepartment(new Department(title), clientHandler.getName()) == -1) {
-//            String msgError = title + " не создан.";
-//            logger.info(msgError);
-//            clientHandler.sendMessage(msgError);
-//            return false;
-//        }
-//        clientHandler.sendMessage("/departmentok " + title);
-//        return true;
-//    }
-
-//    private synchronized boolean isTitleAlreadyExist(String title) {
-//        if (inMemory) {
-//            for (Department department : departments) {
-//                if (department.getTitle().equals(title)) {
-//                    return true;
-//                }
-//            }
-//            return false;
-//        }
-//        return clientDAO.isDepartment(title);
-//    }
-
     @Override
     public synchronized boolean addGroup(ClientHandler clientHandler, String title) {
         if (title.trim().length() < 2) {
@@ -253,11 +217,6 @@ public class AuthenticationProvider implements AuthenticatedProvider {
         return clientDAO.getGroupID(title);
     }
 
-//    @Override
-//    public synchronized Set<Department> getDepartments() {
-//        return clientDAO.getDepartments();
-//    }
-
     @Override
     public synchronized List<String> getGroupTitle(ClientHandler clientHandler) {
         List<String> titleGroups = new ArrayList<>();
@@ -274,9 +233,6 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public synchronized boolean enterGroup(ClientHandler clientHandler, String groupTitle) {
-        //есть ли группа и является ли пользователем членом группы, если да, то вход
-        //иначе сообщение "Вы не являетесь членом группы, можете отправить запрос на
-        //добавление в группу /requestaddgroup <имя группы>"
         int groupID = isGroupAlreadyExist(groupTitle);
         if (groupID == -1) {
             clientHandler.sendMessage("Группы " + groupTitle + " не существует");
@@ -299,14 +255,12 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     }
 
     @Override
-    public synchronized boolean isManagerGroup(ClientHandler clientHandler) {
-        return clientHandler.getName().equals(clientDAO.getUsernameManagerGroup(clientHandler.getGroupTitle()));
+    public synchronized boolean isManagerGroup(ClientHandler clientHandler, String groupTitle) {
+        return clientHandler.getName().equals(clientDAO.getUsernameManagerGroup(groupTitle));
     }
 
     @Override
     public synchronized boolean addRequestAddGroup(ClientHandler clientHandler, String groupTitle) {
-        // есть ли такая группа, не является ли пользователь уже членом группы, есть ли уже запрос на добавление
-        // создать запрос (сделать все одним запросом или собирать данные)
         int groupID = isGroupAlreadyExist(groupTitle);
         if (groupID == -1) {
             clientHandler.sendMessage("Группы " + groupTitle + " не существует");
@@ -369,7 +323,7 @@ public class AuthenticationProvider implements AuthenticatedProvider {
 
     @Override
     public synchronized void kickUserFromGroup(ClientHandler clientHandler, String username) {
-        if(!isManagerGroup(clientHandler)){
+        if(!isManagerGroup(clientHandler, clientHandler.getGroupTitle())){
             clientHandler.sendMessage("Вы не являетесь владельцем группы.");
         } else if (!getUsersToGroup(clientHandler.getGroupTitle()).contains(username)){
             clientHandler.sendMessage(username + " не являетесь членом группы.");
@@ -391,5 +345,14 @@ public class AuthenticationProvider implements AuthenticatedProvider {
     @Override
     public synchronized boolean deleteUser(String username) {
         return clientDAO.deleteUser(username);
+    }
+
+    @Override
+    public synchronized boolean delGroup(String groupTitle) {
+        if(clientDAO.deleteGroup(groupTitle)){
+            server.delGroup(groupTitle);
+            return true;
+        }
+        return false;
     }
 }

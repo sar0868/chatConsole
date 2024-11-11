@@ -38,6 +38,10 @@ where id in (select rag.id from request_add_group rag
 inner join users u on rag.userid = u.id 
 inner join "groups" g ON rag.groupid = g.id 
 where rag.groupid = 1;
+
+insert into groups (id, title, adminid) values(3, 'group', 1);
+select * from "groups" g ;
+delete from "groups" where title = 'group';
 -- id = полученному id запроса
 
 select utg.userid from users_to_groups utg;
